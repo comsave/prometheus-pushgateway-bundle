@@ -3,6 +3,13 @@
   "license": "MIT",
   "require": {
     "ext-redis": "*",
-    "endclothing/prometheus_client_php": "^1.0"
+    "endclothing/prometheus_client_php": "^1.0",
+    "symfony/http-kernel": "^3.4|^4.4",
+    "symfony/console": "^3.4|^4.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Comsave\\": "src/Comsave"
+    }
   }
 }

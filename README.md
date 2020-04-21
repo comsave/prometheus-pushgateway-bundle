@@ -11,6 +11,10 @@ Teaching Morty how to count and sending the results to Prometheus.
 
 2. `bin/console comsave:prometheus:push` cronjob: to push data periodically to Prometheus Pushgateway
 
+## Development
+
+`docker-compose up --remove-orphans -d --build`
+
 ## License
 
 MIT
