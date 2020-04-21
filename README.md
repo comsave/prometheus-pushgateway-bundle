@@ -2,7 +2,7 @@
 
 Teaching Morty how to count and sending the results to Prometheus
 
-![](https://media.giphy.com/media/e6tJpLvjY8jXa/giphy.gif)
+![](https://media.giphy.com/media/e6tJpLvjY8jXa/giphy.gif) ![](https://media.giphy.com/media/W35DnRbN4oDHIAApdk/giphy.gif) ![](https://media.giphy.com/media/RH1IFq2GT0Oau8NRWX/giphy.gif)
 
 ## Requirements
 
