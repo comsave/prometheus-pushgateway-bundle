@@ -1,3 +1,5 @@
 # morty-counts
 
+Teaching Morty how to count and sending the results to Prometheus
+
 ![](https://media.giphy.com/media/e6tJpLvjY8jXa/giphy.gif)
