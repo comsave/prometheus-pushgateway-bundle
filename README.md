@@ -6,9 +6,9 @@ Teaching Morty how to count and sending the results to Prometheus
 
 ## Requirements
 
-`Redis` to act as a buffer before and avoid latency in the code
+1. `Redis` (the service & the PHP extension): to act as a buffer before and avoid latency in the code
 
-`bin/console comsave:prometheus:push` cronjob to push data periodically to Prometheus Pushgateway
+2. `bin/console comsave:prometheus:push` cronjob: to push data periodically to Prometheus Pushgateway
 
 ## License
 
