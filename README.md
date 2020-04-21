@@ -8,4 +8,4 @@ Teaching Morty how to count and sending the results to Prometheus
 
 `Redis` to act as a buffer before and avoid latency in the code
 
-`comsave:prometheus:push` cronjob to push data periodically to Prometheus Pushgateway
+`bin/console comsave:prometheus:push` cronjob to push data periodically to Prometheus Pushgateway
