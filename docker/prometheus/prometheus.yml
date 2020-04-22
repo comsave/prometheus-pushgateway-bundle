@@ -11,4 +11,4 @@ scrape_configs:
     honor_labels: true
     scrape_interval: 2s
     static_configs:
-      - targets: ['localhost:9191']
+      - targets: ['pushgateway:9191']
