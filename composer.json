@@ -1,5 +1,6 @@
 {
   "name": "comsave/morty-counts",
+  "description": "Symfony integration to push Prometheus metrics",
   "license": "MIT",
   "require": {
     "ext-redis": "*",
