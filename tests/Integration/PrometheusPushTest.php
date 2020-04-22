@@ -19,16 +19,13 @@ class PrometheusPushTest extends TestCase
     private $pushGatewayClient;
 
     /** @var string */
-    private $jobName;
+    private $jobName = 'my_custom_service_job';
 
     /** @var string */
-    private $instanceName;
+    private $instanceName = '127.0.0.1:9000';
 
     public function setUp(): void
     {
-        $jobName = 'my_custom_service_job';
-        $instanceName = '127.0.0.1:9000';
-
         $this->prometheusClient = new PrometheusClient(
             'prometheus:9090',
             GuzzleHttpClientFactory::build()
@@ -75,8 +72,8 @@ class PrometheusPushTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals([
             '__name__' => $metricFullName,
-            'instance' => $instanceName,
-            'job' => $jobName,
+            'instance' => $this->instanceName,
+            'job' => $this->jobName,
             'type' => 'blue',
         ], $results[0]['metric']);
         $this->assertEquals(5, $results[0]['value'][1]);
@@ -92,6 +89,7 @@ class PrometheusPushTest extends TestCase
     {
         $metricNamespace = 'test';
         $metricName = 'some_counter_2';
+        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
@@ -102,6 +100,21 @@ class PrometheusPushTest extends TestCase
         $counter->incBy(5, ['blue']);
         $this->pushGatewayClient->push($this->jobName, $this->instanceName);
 
+        sleep(3);
+
+        $results = $this->prometheusClient->query([
+            'query' => $metricFullName,
+        ]);
+
+        $this->assertCount(1, $results);
+        $this->assertEquals([
+            '__name__' => $metricFullName,
+            'instance' => $this->instanceName,
+            'job' => $this->jobName,
+            'type' => 'blue',
+        ], $results[0]['metric']);
+        $this->assertEquals(5, $results[0]['value'][1]);
+
         $counter = $this->pushGatewayClient->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
@@ -111,8 +124,6 @@ class PrometheusPushTest extends TestCase
 
         sleep(3);
 
-        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
-
         $results = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
@@ -120,8 +131,8 @@ class PrometheusPushTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals([
             '__name__' => $metricFullName,
-            'instance' => $instanceName,
-            'job' => $jobName,
+            'instance' => $this->instanceName,
+            'job' => $this->jobName,
             'type' => 'blue',
         ], $results[0]['metric']);
         $this->assertEquals(6, $results[0]['value'][1]);
