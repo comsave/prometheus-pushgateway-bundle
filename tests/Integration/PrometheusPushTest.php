@@ -3,6 +3,7 @@
 namespace Comsave\Tests\Integration;
 
 use Comsave\MortyCountsBundle\Factory\GuzzleHttpClientFactory;
+use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
 use Comsave\MortyCountsBundle\Factory\PushGatewayFactory;
 use Comsave\MortyCountsBundle\Factory\RedisStorageAdapterFactory;
 use Comsave\MortyCountsBundle\Services\PrometheusClient;
@@ -28,6 +29,7 @@ class PrometheusPushTest extends TestCase
     {
         $this->prometheusClient = new PrometheusClient(
             'prometheus:9090',
+            JmsSerializerFactory::build(),
             GuzzleHttpClientFactory::build()
         );
 
@@ -37,7 +39,9 @@ class PrometheusPushTest extends TestCase
         $this->pushGatewayClient = new PushGatewayClient(
             $registry,
             $registryStorageAdapter,
-            PushGatewayFactory::build('pushgateway:9191')
+            PushGatewayFactory::build('pushgateway:9191'),
+            $this->jobName,
+            $this->instanceName
         );
         $this->pushGatewayClient->getRegistryStorageAdapter()->flushRedis();
     }
@@ -59,24 +63,21 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
+        $this->pushGatewayClient->push();
 
         sleep(3);
 
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $results = $this->prometheusClient->query([
+        $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
+        $results = $response->getData()->getResult();
 
         $this->assertCount(1, $results);
-        $this->assertEquals([
-            '__name__' => $metricFullName,
-            'instance' => $this->instanceName,
-            'job' => $this->jobName,
-            'type' => 'blue',
-        ], $results[0]['metric']);
-        $this->assertEquals(5, $results[0]['value'][1]);
+        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
+        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals(5, $results[0]->getValue());
     }
 
     /**
@@ -91,6 +92,7 @@ class PrometheusPushTest extends TestCase
         $metricName = 'some_counter_2';
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
+        // todo: integrate initial (last) value fetch for the counter
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
@@ -98,43 +100,37 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
+        $this->pushGatewayClient->push();
 
         sleep(3);
 
-        $results = $this->prometheusClient->query([
+        $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
+        $results = $response->getData()->getResult();
 
         $this->assertCount(1, $results);
-        $this->assertEquals([
-            '__name__' => $metricFullName,
-            'instance' => $this->instanceName,
-            'job' => $this->jobName,
-            'type' => 'blue',
-        ], $results[0]['metric']);
-        $this->assertEquals(5, $results[0]['value'][1]);
+        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
+        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals(5, $results[0]->getValue());
 
         $counter = $this->pushGatewayClient->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
         );
         $counter->inc(['blue']);
-        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
+        $this->pushGatewayClient->push();
 
         sleep(3);
 
-        $results = $this->prometheusClient->query([
+        $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
+        $results = $response->getData()->getResult();
 
         $this->assertCount(1, $results);
-        $this->assertEquals([
-            '__name__' => $metricFullName,
-            'instance' => $this->instanceName,
-            'job' => $this->jobName,
-            'type' => 'blue',
-        ], $results[0]['metric']);
-        $this->assertEquals(6, $results[0]['value'][1]);
+        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
+        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals(6, $results[0]->getValue());
     }
 }

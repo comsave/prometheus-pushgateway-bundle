@@ -12,20 +12,12 @@ class PrometheusPushCommand extends Command
     /** @var PushGatewayClient */
     private $pushGatewayClient;
 
-    /** @var string */
-    private $prometheusJobName;
-
-    /** @var string */
-    private $prometheusInstanceName;
-
     /**
      * @codeCoverageIgnore
      */
-    public function __construct(PushGatewayClient $pushGatewayClient, string $prometheusJobName, string $prometheusInstanceName)
+    public function __construct(PushGatewayClient $pushGatewayClient)
     {
         $this->pushGatewayClient = $pushGatewayClient;
-        $this->prometheusJobName = $prometheusJobName;
-        $this->prometheusInstanceName = $prometheusInstanceName;
 
         parent::__construct();
     }
@@ -37,11 +29,15 @@ class PrometheusPushCommand extends Command
             ->setDescription('Pushes scheduled metris from PushGateway to Prometheus.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Prometheus\Exception\StorageException
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Pushing metrics...');
 
-        $this->pushGatewayClient->push($this->prometheusJobName, $this->prometheusInstanceName);
+        $this->pushGatewayClient->push();
 
         $output->writeln('Done.');
 

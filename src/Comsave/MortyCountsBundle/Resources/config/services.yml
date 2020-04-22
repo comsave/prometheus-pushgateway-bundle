@@ -34,14 +34,12 @@ services:
   GuzzleHttp\Client:
     factory: ['@Comsave\MortyCountsBundle\GuzzleHttpClientFactory', 'build']
 
+  JMS\Serializer\Serializer:
+    factory: ['@Comsave\MortyCountsBundle\JmsSerializerFactory', 'build']
+
   Comsave\MortyCountsBundle\Services\PrometheusClient:
     autowire: true
     arguments:
       $prometheusUrl: '%morty_counts_prometheus_url%'
-
-  Comsave\MortyCountsBundle\Command\PrometheusPushCommand:
-    autowire: true
-    autoconfigure: true
-    arguments:
       $prometheusJobName: '%morty_counts_prometheus_job%'
       $prometheusInstanceName: '%morty_counts_prometheus_instance%'
