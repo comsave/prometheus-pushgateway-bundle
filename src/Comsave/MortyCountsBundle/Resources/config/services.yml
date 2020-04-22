@@ -1,4 +1,5 @@
 parameters:
+  morty_cuonts_prometheus_url: ''
   morty_counts_pushgateway_url: ''
   morty_counts_redis_host: ''
   morty_counts_redis_port: ''
@@ -27,3 +28,11 @@ services:
   Prometheus\CollectorRegistry:
     arguments:
       $adapter: Prometheus\Storage\Redis
+
+  GuzzleHttp\Client:
+    factory: ['@Comsave\MortyCountsBundle\GuzzleHttpClientFactory', 'build']
+
+  Comsave\MortyCountsBundle\Services\PrometheusClient:
+    autowire: true
+    arguments:
+      $prometheusUrl: '%morty_cuonts_prometheus_url%'

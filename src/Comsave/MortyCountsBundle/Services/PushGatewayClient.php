@@ -6,7 +6,7 @@ use Prometheus\CollectorRegistry;
 use Prometheus\PushGateway;
 use Prometheus\Storage\Redis;
 
-class PrometheusMetricPublisher
+class PushGatewayClient
 {
     /** @var CollectorRegistry */
     private $registry;
@@ -36,11 +36,18 @@ class PrometheusMetricPublisher
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Prometheus\Exception\StorageException
      */
-    public function publish(string $jobName, string $instanceName): void
+    public function push(string $jobName, string $instanceName): void
     {
-        $this->pushGateway->push($this->registry, $jobName, [
-            'instance' => $instanceName,
-        ]);
+        try {
+            $this->pushGateway->pushAdd($this->registry, $jobName, [
+                'instance' => $instanceName,
+            ]);
+        }
+        catch (\RuntimeException $ex) {
+            if(strpos($ex->getMessage(), 'Unexpected status code 200') === false) {
+                throw $ex;
+            }
+        }
 
         $this->registryStorageAdapter->flushRedis();
     }
