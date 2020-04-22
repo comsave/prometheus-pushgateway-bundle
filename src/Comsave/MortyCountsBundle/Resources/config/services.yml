@@ -1,5 +1,7 @@
 parameters:
   morty_counts_pushgateway_url: ''
+  morty_counts_redis_host: ''
+  morty_counts_redis_port: ''
 
 services:
   _defaults:
@@ -13,4 +15,15 @@ services:
 
   Prometheus\PushGateway:
     factory: ['Comsave\MortyCountsBundle\PushGatewayFactory', 'build']
-    arguments: ['%morty_counts_pushgateway_url%']
+    arguments:
+      $pushGatewayUrl: '%morty_counts_pushgateway_url%']
+
+  Prometheus\Storage\Redis:
+    factory: ['Comsave\MortyCountsBundle\RedisStorageAdapterFactory', 'build']
+    arguments:
+      $redisHost: '%morty_counts_redis_host%']
+      $redisPort: '%morty_counts_redis_port%']
+
+  Prometheus\CollectorRegistry:
+    arguments:
+      $adapter: Prometheus\Storage\Redis
