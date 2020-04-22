@@ -6,8 +6,8 @@ use GuzzleHttp\Client;
 
 class GuzzleHttpClientFactory
 {
-    public static function build(): Client
+    public static function build(array $options = []): Client
     {
-        return new Client();
+        return new Client($options);
     }
 }

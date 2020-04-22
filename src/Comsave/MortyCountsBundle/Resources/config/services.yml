@@ -1,6 +1,8 @@
 parameters:
   morty_counts_prometheus_url: ''
   morty_counts_pushgateway_url: ''
+  morty_counts_prometheus_instance: ''
+  morty_counts_prometheus_job: ''
   morty_counts_redis_host: ''
   morty_counts_redis_port: ''
 
@@ -36,3 +38,10 @@ services:
     autowire: true
     arguments:
       $prometheusUrl: '%morty_counts_prometheus_url%'
+
+  Comsave\MortyCountsBundle\Command\PrometheusPushCommand:
+    autowire: true
+    autoconfigure: true
+    arguments:
+      $prometheusJobName: '%morty_counts_prometheus_job%'
+      $prometheusInstanceName: '%morty_counts_prometheus_instance%'

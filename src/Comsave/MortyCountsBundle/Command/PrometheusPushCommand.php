@@ -10,15 +10,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PrometheusPushCommand extends Command
 {
     /** @var PushGatewayClient */
-    private $prometheusMetricPublisher;
+    private $pushGatewayClient;
+
+    /** @var string */
+    private $prometheusJobName;
+
+    /** @var string */
+    private $prometheusInstanceName;
 
     /**
-     * @param PushGatewayClient $prometheusMetricPublisher
      * @codeCoverageIgnore
      */
-    public function __construct(PushGatewayClient $prometheusMetricPublisher)
+    public function __construct(PushGatewayClient $pushGatewayClient, string $prometheusJobName, string $prometheusInstanceName)
     {
-        $this->prometheusMetricPublisher = $prometheusMetricPublisher;
+        $this->pushGatewayClient = $pushGatewayClient;
+        $this->prometheusJobName = $prometheusJobName;
+        $this->prometheusInstanceName = $prometheusInstanceName;
 
         parent::__construct();
     }
@@ -27,14 +34,16 @@ class PrometheusPushCommand extends Command
     {
         $this
             ->setName('comsave:prometheus:push')
-            ->setDescription('');
+            ->setDescription('Pushes scheduled metris from PushGateway to Prometheus.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->prometheusMetricPublisher->publish();
+        $output->writeln('Pushing metrics...');
 
-        $output->writeln('Metrics sent.');
+        $this->pushGatewayClient->push($this->prometheusJobName, $this->prometheusInstanceName);
+
+        $output->writeln('Done.');
 
         return 0;
     }

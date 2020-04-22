@@ -18,8 +18,17 @@ class PrometheusPushTest extends TestCase
     /** @var PushGatewayClient */
     private $pushGatewayClient;
 
+    /** @var string */
+    private $jobName;
+
+    /** @var string */
+    private $instanceName;
+
     public function setUp(): void
     {
+        $jobName = 'my_custom_service_job';
+        $instanceName = '127.0.0.1:9000';
+
         $this->prometheusClient = new PrometheusClient(
             'prometheus:9090',
             GuzzleHttpClientFactory::build()
@@ -43,8 +52,6 @@ class PrometheusPushTest extends TestCase
      */
     public function testPushesCounterMetric(): void
     {
-        $jobName = 'my_custom_service_job';
-        $instanceName = '127.0.0.1:9000';
         $metricNamespace = 'test';
         $metricName = 'some_counter';
 
@@ -55,7 +62,7 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($jobName, $instanceName);
+        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
 
         sleep(3);
 
@@ -83,8 +90,6 @@ class PrometheusPushTest extends TestCase
      */
     public function testPushesCounterMetricAndIncreases(): void
     {
-        $jobName = 'my_custom_service_job';
-        $instanceName = '127.0.0.1:9000';
         $metricNamespace = 'test';
         $metricName = 'some_counter_2';
 
@@ -95,14 +100,14 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($jobName, $instanceName);
+        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
 
         $counter = $this->pushGatewayClient->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
         );
         $counter->inc(['blue']);
-        $this->pushGatewayClient->push($jobName, $instanceName);
+        $this->pushGatewayClient->push($this->jobName, $this->instanceName);
 
         sleep(3);
 
