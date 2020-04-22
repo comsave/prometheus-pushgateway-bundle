@@ -1,5 +1,5 @@
 parameters:
-  morty_cuonts_prometheus_url: ''
+  morty_counts_prometheus_url: ''
   morty_counts_pushgateway_url: ''
   morty_counts_redis_host: ''
   morty_counts_redis_port: ''
@@ -35,4 +35,4 @@ services:
   Comsave\MortyCountsBundle\Services\PrometheusClient:
     autowire: true
     arguments:
-      $prometheusUrl: '%morty_cuonts_prometheus_url%'
+      $prometheusUrl: '%morty_counts_prometheus_url%'

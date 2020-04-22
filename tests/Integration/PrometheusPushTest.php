@@ -27,23 +27,21 @@ class PrometheusPushTest extends TestCase
 
         $registryStorageAdapter = RedisStorageAdapterFactory::build('redis', 6379);
         $registry = new CollectorRegistry($registryStorageAdapter);
-        $pushGateway = PushGatewayFactory::build('pushgateway:9191');
 
         $this->pushGatewayClient = new PushGatewayClient(
             $registry,
             $registryStorageAdapter,
-            $pushGateway
+            PushGatewayFactory::build('pushgateway:9191')
         );
+        $this->pushGatewayClient->getRegistryStorageAdapter()->flushRedis();
     }
 
     public function testPushesCounterMetric(): void
     {
-        // todo: clear before
-
         $jobName = 'my_custom_service_job';
         $instanceName = '127.0.0.1:9000';
         $metricNamespace = 'test';
-        $metricName = 'some_counter_' . substr(md5(mt_rand()), -10);
+        $metricName = 'some_counter';
 
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
@@ -52,7 +50,6 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-
         $this->pushGatewayClient->push($jobName, $instanceName);
 
         sleep(3);
@@ -71,5 +68,46 @@ class PrometheusPushTest extends TestCase
             'type' => 'blue',
         ], $results[0]['metric']);
         $this->assertEquals(5, $results[0]['value'][1]);
+    }
+
+    public function testPushesCounterMetricAndIncreases(): void
+    {
+        $jobName = 'my_custom_service_job';
+        $instanceName = '127.0.0.1:9000';
+        $metricNamespace = 'test';
+        $metricName = 'some_counter_2';
+
+        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+            $metricNamespace,
+            $metricName,
+            'it increases',
+            ['type']
+        );
+        $counter->incBy(5, ['blue']);
+        $this->pushGatewayClient->push($jobName, $instanceName);
+
+        $counter = $this->pushGatewayClient->getRegistry()->getCounter(
+            $metricNamespace,
+            $metricName
+        );
+        $counter->inc(['blue']);
+        $this->pushGatewayClient->push($jobName, $instanceName);
+
+        sleep(3);
+
+        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
+
+        $results = $this->prometheusClient->query([
+            'query' => $metricFullName,
+        ]);
+
+        $this->assertCount(1, $results);
+        $this->assertEquals([
+            '__name__' => $metricFullName,
+            'instance' => $instanceName,
+            'job' => $jobName,
+            'type' => 'blue',
+        ], $results[0]['metric']);
+        $this->assertEquals(6, $results[0]['value'][1]);
     }
 }

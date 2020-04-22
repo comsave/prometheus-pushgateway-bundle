@@ -16,8 +16,8 @@ services:
   prometheus:
     image: prom/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.listen-address=:9090'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     depends_on:
       - pushgateway
     ports:
@@ -29,6 +29,7 @@ services:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9191'
+      - '--push.disable-consistency-check'
     ports:
       - 9191:9191
 

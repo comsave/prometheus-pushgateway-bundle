@@ -13,7 +13,9 @@ Teaching Morty how to count and sending the results to Prometheus.
 
 ## Development
 
-`docker-compose up --remove-orphans -d --build`
+Start `docker-compose up --remove-orphans -d --build`
+
+Tests `docker exec $(docker ps | grep _php | awk '{print $1}') vendor/bin/phpunit tests`
 
 ## License
 
