@@ -33,10 +33,9 @@ class PrometheusClient
 
     public function query(array $arguments): PrometheusResponse
     {
-        $response = $this->httpClient->request('GET', vsprintf('%s/api/v1/query?%s', [
-            $this->prometheusUrl,
-            http_build_query($arguments)
-        ]));
+        $response = $this->httpClient->request('POST', sprintf('%s/api/v1/query', $this->prometheusUrl), [
+            'form_params' => $arguments
+        ]);
 
         return $this->jmsSerializer->deserialize((string)$response->getBody(), PrometheusResponse::class, 'json');
     }
