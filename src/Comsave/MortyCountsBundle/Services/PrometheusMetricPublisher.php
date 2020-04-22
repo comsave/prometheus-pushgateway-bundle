@@ -14,20 +14,20 @@ class PrometheusMetricPublisher
     /** @var Redis */
     private $registryStorageAdapter;
 
-    /** @var string */
-    private $pushGatewayUrl;
+    /** @var PushGateway */
+    private $pushGateway;
 
     /**
      * @param CollectorRegistry $registry
      * @param Redis $registryStorageAdapter
-     * @param string $pushGatewayUrl
+     * @param PushGateway $pushGateway
      * @codeCoverageIgnore
      */
-    public function __construct(CollectorRegistry $registry, Redis $registryStorageAdapter, string $pushGatewayUrl)
+    public function __construct(CollectorRegistry $registry, Redis $registryStorageAdapter, PushGateway $pushGateway)
     {
         $this->registry = $registry;
         $this->registryStorageAdapter = $registryStorageAdapter;
-        $this->pushGatewayUrl = $pushGatewayUrl;
+        $this->pushGateway = $pushGateway;
     }
 
     /**
@@ -49,9 +49,7 @@ class PrometheusMetricPublisher
      */
     public function publish(string $jobName, string $instanceName): bool
     {
-        $pushGateway = new PushGateway($this->pushGatewayUrl);
-
-        $pushGateway->push($this->registry, $jobName, [
+        $this->pushGateway->push($this->registry, $jobName, [
             'instance' => $instanceName,
         ]);
 
