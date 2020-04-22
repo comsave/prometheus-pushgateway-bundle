@@ -41,36 +41,32 @@ class PushGatewayClient
         $this->pushGateway->push($this->registry, $jobName, [
             'instance' => $instanceName,
         ]);
-
-//        $this->registryStorageAdapter->flushRedis();
     }
 
-    /**
-     * @param string $jobName
-     * @param string $instanceName
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\StorageException
-     */
-    public function pushAdd(string $jobName, string $instanceName): void
-    {
-        $this->pushGateway->pushAdd($this->registry, $jobName, [
-            'instance' => $instanceName,
-        ]);
-
-//        $this->registryStorageAdapter->flushRedis();
-    }
-
-    /**
-     * @param string $jobName
-     * @param string $instanceName
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function delete(string $jobName, string $instanceName): void
-    {
-        $this->pushGateway->delete($jobName, [
-            'instance' => $instanceName,
-        ]);
-    }
+//    /**
+//     * @param string $jobName
+//     * @param string $instanceName
+//     * @throws \GuzzleHttp\Exception\GuzzleException
+//     * @throws \Prometheus\Exception\StorageException
+//     */
+//    public function pushAdd(string $jobName, string $instanceName): void
+//    {
+//        $this->pushGateway->pushAdd($this->registry, $jobName, [
+//            'instance' => $instanceName,
+//        ]);
+//    }
+//
+//    /**
+//     * @param string $jobName
+//     * @param string $instanceName
+//     * @throws \GuzzleHttp\Exception\GuzzleException
+//     */
+//    public function delete(string $jobName, string $instanceName): void
+//    {
+//        $this->pushGateway->delete($jobName, [
+//            'instance' => $instanceName,
+//        ]);
+//    }
 
     public function getRegistry(): CollectorRegistry
     {

@@ -36,6 +36,11 @@ class PrometheusPushTest extends TestCase
         $this->pushGatewayClient->getRegistryStorageAdapter()->flushRedis();
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Prometheus\Exception\MetricsRegistrationException
+     * @throws \Prometheus\Exception\StorageException
+     */
     public function testPushesCounterMetric(): void
     {
         $jobName = 'my_custom_service_job';
@@ -70,6 +75,12 @@ class PrometheusPushTest extends TestCase
         $this->assertEquals(5, $results[0]['value'][1]);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Prometheus\Exception\MetricNotFoundException
+     * @throws \Prometheus\Exception\MetricsRegistrationException
+     * @throws \Prometheus\Exception\StorageException
+     */
     public function testPushesCounterMetricAndIncreases(): void
     {
         $jobName = 'my_custom_service_job';
