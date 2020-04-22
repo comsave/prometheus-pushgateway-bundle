@@ -1,10 +1,10 @@
 parameters:
-  morty_counts_prometheus_url: ''
-  morty_counts_pushgateway_url: ''
-  morty_counts_prometheus_instance: ''
-  morty_counts_prometheus_job: ''
-  morty_counts_redis_host: ''
-  morty_counts_redis_port: ''
+  morty_counts_prometheus_url: 'prometheus:9090'
+  morty_counts_pushgateway_url: 'pushgateway:9191'
+  morty_counts_prometheus_instance: 'my_custom_push_service_host'
+  morty_counts_prometheus_job: 'my_custom_push_job'
+  morty_counts_redis_host: 'redis'
+  morty_counts_redis_port: 6379
 
 services:
   _defaults:
