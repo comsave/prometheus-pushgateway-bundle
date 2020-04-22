@@ -31,28 +31,22 @@ class PrometheusMetricPublisher
     }
 
     /**
-     * @return bool
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     */
-    public function buffer(): bool
-    {
-        $counter = $this->registry->registerCounter('test', 'some_counter', 'it increases', ['type']);
-        $counter->incBy(6, ['blue']);
-    }
-
-    /**
      * @param string $jobName
      * @param string $instanceName
-     * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Prometheus\Exception\StorageException
      */
-    public function publish(string $jobName, string $instanceName): bool
+    public function publish(string $jobName, string $instanceName): void
     {
         $this->pushGateway->push($this->registry, $jobName, [
             'instance' => $instanceName,
         ]);
 
         $this->registryStorageAdapter->flushRedis();
+    }
+
+    public function getRegistry(): CollectorRegistry
+    {
+        return $this->registry;
     }
 }
