@@ -2,8 +2,11 @@
 
 namespace Comsave\MortyCountsBundle\Services;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\CollectorRegistry;
 use Prometheus\Counter;
+use Prometheus\Exception\MetricsRegistrationException;
+use Prometheus\Exception\StorageException;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
 use Prometheus\PushGateway;
@@ -21,16 +24,12 @@ class PushGatewayClient
     private $pushGateway;
 
     /** @var string */
-    private $prometheusJobName;
-
-    /** @var string */
     private $prometheusInstanceName;
 
     /**
      * @param CollectorRegistry $registry
      * @param Redis $registryStorageAdapter
      * @param PushGateway $pushGateway
-     * @param string $prometheusJobName
      * @param string $prometheusInstanceName
      * @codeCoverageIgnore
      */
@@ -38,40 +37,53 @@ class PushGatewayClient
         CollectorRegistry $registry,
         Redis $registryStorageAdapter,
         PushGateway $pushGateway,
-        string $prometheusJobName,
         string $prometheusInstanceName
     ) {
         $this->registry = $registry;
         $this->registryStorageAdapter = $registryStorageAdapter;
         $this->pushGateway = $pushGateway;
-        $this->prometheusJobName = $prometheusJobName;
         $this->prometheusInstanceName = $prometheusInstanceName;
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws StorageException
      */
-    public function push(): void
+    public function push(string $prometheusJobName): void
     {
-        $this->pushGateway->push($this->registry, $this->prometheusJobName, [
-            'instance' => $this->prometheusInstanceName,
-        ]);
+        $this->pushGateway->push(
+            $this->registry,
+            $prometheusJobName,
+            [
+                'instance' => $this->prometheusInstanceName,
+            ]
+        );
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws StorageException
      */
-    public function pushAdd(): void
+    public function pushAll(array $prometheusJobNames): void
     {
-        $this->pushGateway->pushAdd($this->registry, $this->prometheusJobName, [
-            'instance' => $this->prometheusInstanceName,
-        ]);
+        foreach ($prometheusJobNames as $jobName) {
+            $this->push($jobName);
+        }
     }
 
+//    /**
+//     * @throws \GuzzleHttp\Exception\GuzzleException
+//     * @throws \Prometheus\Exception\StorageException
+//     */
+//    public function pushAdd(): void
+//    {
+//        $this->pushGateway->pushAdd($this->registry, $this->prometheusJobName, [
+//            'instance' => $this->prometheusInstanceName,
+//        ]);
+//    }
+
     /**
-     * @throws \Prometheus\Exception\MetricsRegistrationException
+     * @throws MetricsRegistrationException
      */
     public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
     {
@@ -84,7 +96,7 @@ class PushGatewayClient
     }
 
     /**
-     * @throws \Prometheus\Exception\MetricsRegistrationException
+     * @throws MetricsRegistrationException
      */
     public function gauge(string $namespace, string $name, ?string $help = null, array $labels = []): Gauge
     {
@@ -97,7 +109,7 @@ class PushGatewayClient
     }
 
     /**
-     * @throws \Prometheus\Exception\MetricsRegistrationException
+     * @throws MetricsRegistrationException
      */
     public function histogram(string $namespace, string $name, ?string $help = null, array $labels = [], ?array $buckets = null): Histogram
     {
@@ -111,7 +123,7 @@ class PushGatewayClient
     }
 
     /**
-     * @throws \Prometheus\Exception\StorageException
+     * @throws StorageException
      */
     public function flush(): void
     {

@@ -40,7 +40,6 @@ class PrometheusPushTest extends TestCase
             $registry,
             $registryStorageAdapter,
             PushGatewayFactory::build('pushgateway:9191'),
-            $this->jobName,
             $this->instanceName
         );
         $this->pushGatewayClient->flush();
@@ -64,7 +63,7 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push();
+        $this->pushGatewayClient->push($this->jobName);
 
         sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
@@ -97,7 +96,7 @@ class PrometheusPushTest extends TestCase
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push();
+        $this->pushGatewayClient->push($this->jobName);
 
         sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
@@ -117,7 +116,7 @@ class PrometheusPushTest extends TestCase
             $metricName
         );
         $counter->inc(['blue']);
-        $this->pushGatewayClient->push();
+        $this->pushGatewayClient->push($this->jobName);
 
         sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
