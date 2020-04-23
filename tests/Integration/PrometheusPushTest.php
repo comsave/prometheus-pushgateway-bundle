@@ -55,6 +55,7 @@ class PrometheusPushTest extends TestCase
     {
         $metricNamespace = 'test';
         $metricName = 'some_counter';
+        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
         $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
@@ -65,14 +66,11 @@ class PrometheusPushTest extends TestCase
         $counter->incBy(5, ['blue']);
         $this->pushGatewayClient->push();
 
-        sleep(3);
+        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
-        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
-
-        $response = $this->prometheusClient->query([
+        $results = $this->prometheusClient->query([
             'query' => $metricFullName,
-        ]);
-        $results = $response->getData()->getResults();
+        ])->getData()->getResults();
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -101,12 +99,11 @@ class PrometheusPushTest extends TestCase
         $counter->incBy(5, ['blue']);
         $this->pushGatewayClient->push();
 
-        sleep(3);
+        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query([
+        $results = $this->prometheusClient->query([
             'query' => $metricFullName,
-        ]);
-        $results = $response->getData()->getResults();
+        ])->getData()->getResults();
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -122,12 +119,11 @@ class PrometheusPushTest extends TestCase
         $counter->inc(['blue']);
         $this->pushGatewayClient->push();
 
-        sleep(3);
+        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query([
+        $results = $this->prometheusClient->query([
             'query' => $metricFullName,
-        ]);
-        $results = $response->getData()->getResults();
+        ])->getData()->getResults();
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
