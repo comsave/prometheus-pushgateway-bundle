@@ -28,7 +28,7 @@ class PrometheusPushTest extends TestCase
     public function setUp(): void
     {
         $this->prometheusClient = new PrometheusClient(
-            'prometheus:9090',
+            'haproxy:9090',
             JmsSerializerFactory::build(),
             GuzzleHttpClientFactory::build()
         );
@@ -39,7 +39,7 @@ class PrometheusPushTest extends TestCase
         $this->pushGatewayClient = new PushGatewayClient(
             $registry,
             $registryStorageAdapter,
-            PushGatewayFactory::build('pushgateway:9191'),
+            PushGatewayFactory::build('haproxy:9191'),
             $this->instanceName
         );
         $this->pushGatewayClient->flush();
@@ -56,7 +56,7 @@ class PrometheusPushTest extends TestCase
         $metricName = 'some_counter';
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->counter(
+        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -89,7 +89,7 @@ class PrometheusPushTest extends TestCase
         $metricName = 'some_counter_2';
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->counter(
+        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -111,7 +111,7 @@ class PrometheusPushTest extends TestCase
 
         // todo: integrate initial (last) value fetch for the COUNTER
         // todo: this should work even after clearing redis cache which should be done after every push
-        $counter = $this->pushGatewayClient->counter(
+        $counter = $this->pushGatewayClient->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
         );

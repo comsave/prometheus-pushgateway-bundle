@@ -15,8 +15,13 @@ services:
 
   haproxy:
     image: haproxy:alpine
-    ports:
-      - 9190:9190
+    depends_on:
+      - prometheus
+      - prometheus2
+      - prometheus3
+      - pushgateway
+      - pushgateway2
+      - pushgateway3
     volumes:
       - ./docker/haproxy:/usr/local/etc/haproxy:ro
 
@@ -38,7 +43,6 @@ services:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9191'
-      - '--push.disable-consistency-check' # todo: remove this after the pushGatewayClient is fixed
       - '--persistence.interval=5m'
     ports:
       - 9191:9191
@@ -61,7 +65,6 @@ services:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9192'
-      - '--push.disable-consistency-check'
       - '--persistence.interval=5m'
     ports:
       - 9192:9192
@@ -84,7 +87,6 @@ services:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9193'
-      - '--push.disable-consistency-check'
       - '--persistence.interval=5m'
     ports:
       - 9193:9193

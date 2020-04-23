@@ -51,13 +51,20 @@ class PushGatewayClient
      */
     public function push(string $prometheusJobName): void
     {
-        $this->pushGateway->push(
-            $this->registry,
-            $prometheusJobName,
-            [
-                'instance' => $this->prometheusInstanceName,
-            ]
-        );
+        try {
+            $this->pushGateway->push(
+                $this->registry,
+                $prometheusJobName,
+                [
+                    'instance' => $this->prometheusInstanceName,
+                ]
+            );
+        }
+        catch (\RuntimeException $ex) {
+            if(strpos($ex->getMessage(), 'Unexpected status code 200 received from push gateway') === false) {
+                throw $ex;
+            }
+        }
     }
 
     /**
@@ -120,6 +127,11 @@ class PushGatewayClient
             $labels,
             $buckets
         );
+    }
+
+    public function getRegistry(): CollectorRegistry
+    {
+        return $this->registry;
     }
 
     /**
