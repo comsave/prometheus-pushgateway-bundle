@@ -43,7 +43,7 @@ class PrometheusPushTest extends TestCase
             $this->jobName,
             $this->instanceName
         );
-        $this->pushGatewayClient->getRegistryStorageAdapter()->flushRedis();
+        $this->pushGatewayClient->flush();
     }
 
     /**
