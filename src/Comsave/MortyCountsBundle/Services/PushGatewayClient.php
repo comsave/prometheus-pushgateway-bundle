@@ -75,7 +75,7 @@ class PushGatewayClient
      */
     public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
     {
-        return $this->getRegistry()->getOrRegisterCounter(
+        return $this->registry->getOrRegisterCounter(
             $namespace,
             $name,
             $help,
@@ -88,7 +88,7 @@ class PushGatewayClient
      */
     public function gauge(string $namespace, string $name, ?string $help = null, array $labels = []): Gauge
     {
-        return $this->getRegistry()->getOrRegisterGauge(
+        return $this->registry->getOrRegisterGauge(
             $namespace,
             $name,
             $help,
@@ -101,7 +101,7 @@ class PushGatewayClient
      */
     public function histogram(string $namespace, string $name, ?string $help = null, array $labels = [], ?array $buckets = null): Histogram
     {
-        return $this->getRegistry()->getOrRegisterHistogram(
+        return $this->registry->getOrRegisterHistogram(
             $namespace,
             $name,
             $help,
@@ -116,15 +116,5 @@ class PushGatewayClient
     public function flush(): void
     {
         $this->registryStorageAdapter->flushRedis();
-    }
-
-    public function getRegistry(): CollectorRegistry
-    {
-        return $this->registry;
-    }
-
-    public function getRegistryStorageAdapter(): Redis
-    {
-        return $this->registryStorageAdapter;
     }
 }
