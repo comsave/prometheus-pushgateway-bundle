@@ -56,7 +56,7 @@ class PrometheusPushTest extends TestCase
         $metricNamespace = 'test';
         $metricName = 'some_counter';
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -92,7 +92,7 @@ class PrometheusPushTest extends TestCase
         $metricName = 'some_counter_2';
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -115,7 +115,7 @@ class PrometheusPushTest extends TestCase
 
         // todo: integrate initial (last) value fetch for the COUNTER
         // todo: this should work even after clearing redis cache which should be done after every push
-        $counter = $this->pushGatewayClient->getRegistry()->getCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName
         );

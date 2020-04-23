@@ -70,16 +70,44 @@ class PushGatewayClient
         ]);
     }
 
-    public function counter(): Counter
+    /**
+     * @throws \Prometheus\Exception\MetricsRegistrationException
+     */
+    public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
     {
+        return $this->getRegistry()->getOrRegisterCounter(
+            $namespace,
+            $name,
+            $help,
+            $labels
+        );
     }
 
-    public function gauge(): Gauge
+    /**
+     * @throws \Prometheus\Exception\MetricsRegistrationException
+     */
+    public function gauge(string $namespace, string $name, ?string $help = null, array $labels = []): Gauge
     {
+        return $this->getRegistry()->getOrRegisterGauge(
+            $namespace,
+            $name,
+            $help,
+            $labels
+        );
     }
 
-    public function histogram(): Histogram
+    /**
+     * @throws \Prometheus\Exception\MetricsRegistrationException
+     */
+    public function histogram(string $namespace, string $name, ?string $help = null, array $labels = [], ?array $buckets = null): Histogram
     {
+        return $this->getRegistry()->getOrRegisterHistogram(
+            $namespace,
+            $name,
+            $help,
+            $labels,
+            $buckets
+        );
     }
 
     /**
