@@ -2,7 +2,6 @@
 
 namespace Comsave\MortyCountsBundle\Services;
 
-use Comsave\MortyCountsBundle\Model\PrometheusMetric;
 use Comsave\MortyCountsBundle\Model\PrometheusResponse;
 use GuzzleHttp\ClientInterface;
 use JMS\Serializer\Serializer;
@@ -29,6 +28,8 @@ class PrometheusClient
         $this->prometheusUrl = $prometheusUrl;
         $this->jmsSerializer = $jmsSerializer;
         $this->httpClient = $httpClient;
+
+        // todo: move this out to a separate repo later
     }
 
     public function query(array $arguments): PrometheusResponse

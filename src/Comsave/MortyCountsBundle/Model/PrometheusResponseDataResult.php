@@ -7,8 +7,8 @@ use JMS\Serializer\Annotation as JMS;
 class PrometheusResponseDataResult
 {
     /**
-     * @var PrometheusMetric
-     * @JMS\Type("Comsave\MortyCountsBundle\Model\PrometheusMetric")
+     * @var array
+     * @JMS\Type("array")
      */
     private $metric;
 
@@ -19,12 +19,12 @@ class PrometheusResponseDataResult
      */
     private $values;
 
-    public function getMetric(): PrometheusMetric
+    public function getMetric(): array
     {
         return $this->metric;
     }
 
-    public function setMetric(PrometheusMetric $metric): void
+    public function setMetric(array $metric): void
     {
         $this->metric = $metric;
     }

@@ -5,7 +5,6 @@ namespace Comsave\Tests\Unit;
 use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
 use Comsave\MortyCountsBundle\Model\PrometheusMetric;
 use Comsave\MortyCountsBundle\Model\PrometheusResponse;
-use Comsave\MortyCountsBundle\Model\PrometheusResponseData;
 use Comsave\MortyCountsBundle\Model\PrometheusResponseDataResult;
 use JMS\Serializer\Serializer;
 use PHPUnit\Framework\TestCase;
@@ -43,18 +42,17 @@ class MetricSerializerTest extends TestCase
   }
 }';
 
-        $metricStub = new PrometheusMetric();
-        $metricStub->setJob('my_custom_service_job');
-        $metricStub->setInstance('127.0.0.1:9000');
-        $metricStub->setName('test_some_counter');
-        $metricStub->setType('blue');
-
         /** @var PrometheusResponse $prometheusResponse */
         $prometheusResponse = $this->jmsSerializer->deserialize($responseJson, PrometheusResponse::class, 'json');
         /** @var PrometheusResponseDataResult $prometheusDataResult */
-        $prometheusDataResult = $prometheusResponse->getData()->getResult()[0];
+        $prometheusDataResult = $prometheusResponse->getData()->getResults()[0];
 
-        $this->assertEquals($metricStub, $prometheusDataResult->getMetric());
+        $this->assertEquals([
+            '__name__' => 'test_some_counter',
+            'instance' => '127.0.0.1:9000',
+            'job' => 'my_custom_service_job',
+            'type' => 'blue'
+        ], $prometheusDataResult->getMetric());
         $this->assertEquals(5, $prometheusDataResult->getValue());
     }
 }

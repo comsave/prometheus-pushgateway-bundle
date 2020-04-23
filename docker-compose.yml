@@ -18,6 +18,8 @@ services:
     command:
       - '--web.listen-address=:9090'
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
     depends_on:
       - pushgateway
     ports:
@@ -30,6 +32,7 @@ services:
     command:
       - '--web.listen-address=:9191'
       - '--push.disable-consistency-check'
+      - '--persistence.interval=5m'
     ports:
       - 9191:9191
 

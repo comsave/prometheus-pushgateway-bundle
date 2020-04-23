@@ -72,11 +72,11 @@ class PrometheusPushTest extends TestCase
         $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
-        $results = $response->getData()->getResult();
+        $results = $response->getData()->getResults();
 
         $this->assertCount(1, $results);
-        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
-        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+        $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
     }
 
@@ -92,7 +92,6 @@ class PrometheusPushTest extends TestCase
         $metricName = 'some_counter_2';
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        // todo: integrate initial (last) value fetch for the counter
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
@@ -107,13 +106,15 @@ class PrometheusPushTest extends TestCase
         $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
-        $results = $response->getData()->getResult();
+        $results = $response->getData()->getResults();
 
         $this->assertCount(1, $results);
-        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
-        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+        $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
 
+        // todo: integrate initial (last) value fetch for the COUNTER
+        // todo: this should work even after clearing redis cache which should be done after every push
         $counter = $this->pushGatewayClient->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
@@ -126,11 +127,11 @@ class PrometheusPushTest extends TestCase
         $response = $this->prometheusClient->query([
             'query' => $metricFullName,
         ]);
-        $results = $response->getData()->getResult();
+        $results = $response->getData()->getResults();
 
         $this->assertCount(1, $results);
-        $this->assertEquals($metricFullName, $results[0]->getMetric()->getName());
-        $this->assertEquals('blue', $results[0]->getMetric()->getType());
+        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+        $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(6, $results[0]->getValue());
     }
 }

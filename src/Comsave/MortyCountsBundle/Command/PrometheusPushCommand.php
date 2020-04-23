@@ -38,6 +38,7 @@ class PrometheusPushCommand extends Command
         $output->writeln('Pushing metrics...');
 
         $this->pushGatewayClient->push();
+        $this->pushGatewayClient->flush();
 
         $output->writeln('Done.');
 

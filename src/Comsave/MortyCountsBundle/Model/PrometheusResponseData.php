@@ -14,9 +14,10 @@ class PrometheusResponseData
 
     /**
      * @var array|PrometheusResponseDataResult[]
+     * @JMS\SerializedName("result")
      * @JMS\Type("array<Comsave\MortyCountsBundle\Model\PrometheusResponseDataResult>")
      */
-    private $result;
+    private $results;
 
     public function getResultType(): string
     {
@@ -28,13 +29,13 @@ class PrometheusResponseData
         $this->resultType = $resultType;
     }
 
-    public function getResult(): array
+    public function getResults(): array
     {
-        return $this->result;
+        return $this->results;
     }
 
-    public function setResult(array $result): void
+    public function setResults(array $results): void
     {
-        $this->result = $result;
+        $this->results = $results;
     }
 }

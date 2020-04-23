@@ -3,6 +3,9 @@
 namespace Comsave\MortyCountsBundle\Services;
 
 use Prometheus\CollectorRegistry;
+use Prometheus\Counter;
+use Prometheus\Gauge;
+use Prometheus\Histogram;
 use Prometheus\PushGateway;
 use Prometheus\Storage\Redis;
 
@@ -54,6 +57,37 @@ class PushGatewayClient
         $this->pushGateway->push($this->registry, $this->prometheusJobName, [
             'instance' => $this->prometheusInstanceName,
         ]);
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Prometheus\Exception\StorageException
+     */
+    public function pushAdd(): void
+    {
+        $this->pushGateway->pushAdd($this->registry, $this->prometheusJobName, [
+            'instance' => $this->prometheusInstanceName,
+        ]);
+    }
+
+    public function counter(): Counter
+    {
+    }
+
+    public function gauge(): Gauge
+    {
+    }
+
+    public function histogram(): Histogram
+    {
+    }
+
+    /**
+     * @throws \Prometheus\Exception\StorageException
+     */
+    public function flush(): void
+    {
+        $this->registryStorageAdapter->flushRedis();
     }
 
     public function getRegistry(): CollectorRegistry
