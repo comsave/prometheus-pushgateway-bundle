@@ -2,13 +2,24 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'prometheus'
-    scrape_interval: 1s
+  - job_name: 'federate'
+    scrape_interval: 200ms
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job=~"morty_.*"}'
     static_configs:
-      - targets: ['prometheus:9090', 'prometheus2:9091', 'prometheus3:9092']
+      - targets:
+          - 'prometheus:9091'
+#          - 'prometheus2:9092'
+          - 'prometheus3:9093'
 
   - job_name: 'pushgateway'
+    scrape_interval: 500ms
     honor_labels: true
-    scrape_interval: 1s
     static_configs:
-      - targets: ['pushgateway2:9192']
+      - targets:
+          - 'pushgateway:9191'
+          - 'pushgateway2:9192'
+          - 'pushgateway3:9193'

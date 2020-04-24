@@ -28,14 +28,14 @@ services:
   prometheus:
     image: prom/prometheus
     command:
-      - '--web.listen-address=:9090'
+      - '--web.listen-address=:9091'
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
     depends_on:
       - pushgateway
     ports:
-      - 9090:9090
+      - 9091:9091
     volumes:
       - ./docker/prometheus/prometheus1.yml/:/etc/prometheus/prometheus.yml
 
@@ -43,33 +43,10 @@ services:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9191'
-      - '--persistence.interval=5m'
     ports:
       - 9191:9191
 
   prometheus2:
-    image: prom/prometheus
-    command:
-      - '--web.listen-address=:9091'
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-    depends_on:
-      - pushgateway2
-    ports:
-      - 9091:9091
-    volumes:
-      - ./docker/prometheus/prometheus.yml/:/etc/prometheus/prometheus.yml
-
-  pushgateway2:
-    image: prom/pushgateway
-    command:
-      - '--web.listen-address=:9192'
-      - '--persistence.interval=5m'
-    ports:
-      - 9192:9192
-
-  prometheus3:
     image: prom/prometheus
     command:
       - '--web.listen-address=:9092'
@@ -77,28 +54,48 @@ services:
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
     depends_on:
-      - pushgateway3
+      - pushgateway2
     ports:
       - 9092:9092
     volumes:
-      - ./docker/prometheus/prometheus.yml/:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus/prometheus2.yml/:/etc/prometheus/prometheus.yml
+
+  pushgateway2:
+    image: prom/pushgateway
+    command:
+      - '--web.listen-address=:9192'
+    ports:
+      - 9192:9192
+
+  prometheus3:
+    image: prom/prometheus
+    command:
+      - '--web.listen-address=:9093'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+    depends_on:
+      - pushgateway3
+    ports:
+      - 9093:9093
+    volumes:
+      - ./docker/prometheus/prometheus3.yml/:/etc/prometheus/prometheus.yml
 
   pushgateway3:
     image: prom/pushgateway
     command:
       - '--web.listen-address=:9193'
-      - '--persistence.interval=5m'
     ports:
       - 9193:9193
 
   grafana:
     image: grafana/grafana
     depends_on:
-      - prometheus
+      - haproxy
     ports:
       - 3000:3000
     volumes:
-      - ./docker/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./docker/grafana/datasources1.yml:/etc/grafana/provisioning/datasources/datasources.yml
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false

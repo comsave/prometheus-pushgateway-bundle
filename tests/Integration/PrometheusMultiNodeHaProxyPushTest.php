@@ -11,38 +11,31 @@ use Comsave\MortyCountsBundle\Services\PushGatewayClient;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
 
-class PrometheusPushTest extends TestCase
+class PrometheusMultiNodeHaProxyPushTest extends TestCase
 {
-    /** @var PrometheusClient */
-    private $prometheusClient;
-
-    /** @var PushGatewayClient */
-    private $pushGatewayClient;
-
     /** @var string */
-    private $jobName = 'my_custom_service_job';
+    private $jobName = 'service_job';
 
-    /** @var string */
-    private $instanceName = '127.0.0.1:9000';
-
-    public function setUp(): void
+    public static function buildPrometheusClient(string $prometheusUrl): PrometheusClient
     {
-        $this->prometheusClient = new PrometheusClient(
-            'haproxy:9090',
+        return new PrometheusClient(
+            $prometheusUrl,
             JmsSerializerFactory::build(),
             GuzzleHttpClientFactory::build()
         );
+    }
 
+    public static function buildPushGatewayClient(string $pushGatewayUrl): PushGatewayClient
+    {
         $registryStorageAdapter = RedisStorageAdapterFactory::build('redis', 6379);
         $registry = new CollectorRegistry($registryStorageAdapter);
 
-        $this->pushGatewayClient = new PushGatewayClient(
+        return new PushGatewayClient(
             $registry,
             $registryStorageAdapter,
-            PushGatewayFactory::build('haproxy:9191'),
-            $this->instanceName
+            PushGatewayFactory::build($pushGatewayUrl),
+            '127.0.0.1:9000'
         );
-        $this->pushGatewayClient->flush();
     }
 
     /**
@@ -50,28 +43,34 @@ class PrometheusPushTest extends TestCase
      * @throws \Prometheus\Exception\MetricsRegistrationException
      * @throws \Prometheus\Exception\StorageException
      */
-    public function testPushesCounterMetric(): void
+    public function testPushesOneCounterMetric(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter';
+        $metricName = 'some_counter_1_' . date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
+        var_dump($metricFullName);
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
+        $pushGateway1->flush();
+
+        $counter = $pushGateway1->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
             'it increases',
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($this->jobName);
+        $pushGateway1->push($this->jobName);
 
-        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
+        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $results = $this->prometheusClient->query([
+        $response = static::buildPrometheusClient('haproxy:9090')->query([
             'query' => $metricFullName,
-        ])->getData()->getResults();
+        ]);
+//        var_dump($response);
+        $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results);
+        $this->assertCount(1, $results, 'Node 1 results invalid.');
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
@@ -86,45 +85,53 @@ class PrometheusPushTest extends TestCase
     public function testPushesCounterMetricAndIncreases(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_2';
+        $metricName = 'some_counter_2_' . date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
+        var_dump($metricFullName);
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
+        $pushGateway1->flush();
+
+        $counter = $pushGateway1->getRegistry()->registerCounter(
             $metricNamespace,
             $metricName,
             'it increases',
             ['type']
         );
         $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($this->jobName);
+        $pushGateway1->push($this->jobName.'_2');
 
-        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
+        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $results = $this->prometheusClient->query([
+        $response = static::buildPrometheusClient('haproxy:9090')->query([
             'query' => $metricFullName,
-        ])->getData()->getResults();
+        ]);
+//        var_dump($response);
+        $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results);
+        $this->assertCount(1, $results, 'Node 1 results invalid.');
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
 
         // todo: integrate initial (last) value fetch for the COUNTER
         // todo: this should work even after clearing redis cache which should be done after every push
-        $counter = $this->pushGatewayClient->getRegistry()->getCounter(
+        $counter = $pushGateway1->getRegistry()->getCounter(
             $metricNamespace,
             $metricName
         );
         $counter->inc(['blue']);
-        $this->pushGatewayClient->push($this->jobName);
+        $pushGateway1->push($this->jobName.'_2');
 
-        sleep(3); // wait for Prometheus to pull the metrics from PushGateway
+        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $results = $this->prometheusClient->query([
+        $response = static::buildPrometheusClient('haproxy:9090')->query([
             'query' => $metricFullName,
-        ])->getData()->getResults();
+        ]);
+//        var_dump($response);
+        $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results);
+        $this->assertCount(1, $results, 'Node 1 results invalid.');
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(6, $results[0]->getValue());

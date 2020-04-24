@@ -52,9 +52,10 @@ class PushGatewayClient
     public function push(string $prometheusJobName): void
     {
         try {
+//            $this->pushGateway->pushAdd(
             $this->pushGateway->push(
                 $this->registry,
-                $prometheusJobName,
+                sprintf('morty_%s', $prometheusJobName),
                 [
                     'instance' => $this->prometheusInstanceName,
                 ]
@@ -77,17 +78,6 @@ class PushGatewayClient
             $this->push($jobName);
         }
     }
-
-//    /**
-//     * @throws \GuzzleHttp\Exception\GuzzleException
-//     * @throws \Prometheus\Exception\StorageException
-//     */
-//    public function pushAdd(): void
-//    {
-//        $this->pushGateway->pushAdd($this->registry, $this->prometheusJobName, [
-//            'instance' => $this->prometheusInstanceName,
-//        ]);
-//    }
 
     /**
      * @throws MetricsRegistrationException
@@ -140,5 +130,10 @@ class PushGatewayClient
     public function flush(): void
     {
         $this->registryStorageAdapter->flushRedis();
+    }
+
+    public function setPrometheusInstanceName(string $prometheusInstanceName): void
+    {
+        $this->prometheusInstanceName = $prometheusInstanceName;
     }
 }
