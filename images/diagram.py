@@ -5,7 +5,7 @@ from diagrams.onprem.monitoring import Prometheus
 from diagrams.onprem.network import Haproxy
 from diagrams.aws.compute import ECS
 
-with Diagram(name="Advanced Prometheus Cluster Setup", show=False, direction="TB"):
+with Diagram(name="Advanced Prometheus Cluster Setup", show=False):
     haproxy = Haproxy("haproxy")
 
     with Cluster("App Cluster"):
@@ -35,13 +35,13 @@ with Diagram(name="Advanced Prometheus Cluster Setup", show=False, direction="TB
         push1 << Edge(color="brown") << prom2
         push1 << Edge(color="brown") << prom3
 
-        push2 << Edge(label="pull", color="brown") << prom2
         push2 << Edge(color="brown") << prom1
+        push2 << Edge(label="pull", color="brown") << prom2
         push2 << Edge(color="brown") << prom3
 
-        push3 << Edge(label="pull", color="brown") << prom3
         push3 << Edge(color="brown") << prom1
         push3 << Edge(color="brown") << prom2
+        push3 << Edge(label="pull", color="brown") << prom3
 
         prom1 << Edge(label="pull") << prom2
         prom1 << Edge(label="pull") << prom3
