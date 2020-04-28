@@ -1,6 +1,6 @@
 # morty-counts
 
-Teaching Morty how to count and sending the results to Prometheus.
+Teaching Morty how to count and sending the results to Prometheus. + High Availability Option
 
 ![](https://media.giphy.com/media/W35DnRbN4oDHIAApdk/giphy.gif)
 ![](https://media.giphy.com/media/RH1IFq2GT0Oau8NRWX/giphy.gif)
@@ -18,6 +18,8 @@ Teaching Morty how to count and sending the results to Prometheus.
 ![](./images/basic_prometheus_cluster_setup.png)
 
 ### Multi-node Prometheus + Pushgateway
+
+todo details
 
 ![](./images/advanced_prometheus_cluster_setup.png)
 
