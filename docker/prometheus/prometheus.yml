@@ -2,13 +2,8 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'prometheus'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['prometheus:9090']
-
   - job_name: 'pushgateway'
     honor_labels: true
-    scrape_interval: 2s
+    scrape_interval: 500ms
     static_configs:
       - targets: ['pushgateway:9191']
