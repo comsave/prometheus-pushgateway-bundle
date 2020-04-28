@@ -11,14 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class MetricSerializerTest extends TestCase
 {
-    /** @var Serializer */
-    private $jmsSerializer;
-
-    public function setUp(): void
-    {
-        $this->jmsSerializer = JmsSerializerFactory::build();
-    }
-
     public function testDeserializesCorrectly(): void
     {
         $responseJson = '{
@@ -43,7 +35,7 @@ class MetricSerializerTest extends TestCase
 }';
 
         /** @var PrometheusResponse $prometheusResponse */
-        $prometheusResponse = $this->jmsSerializer->deserialize($responseJson, PrometheusResponse::class, 'json');
+        $prometheusResponse = JmsSerializerFactory::build()->deserialize($responseJson, PrometheusResponse::class, 'json');
         /** @var PrometheusResponseDataResult $prometheusDataResult */
         $prometheusDataResult = $prometheusResponse->getData()->getResults()[0];
 
