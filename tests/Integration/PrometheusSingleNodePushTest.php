@@ -2,16 +2,14 @@
 
 namespace Comsave\Tests\Integration;
 
-use Comsave\MortyCountsBundle\Factory\GuzzleHttpClientFactory;
-use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
-use Comsave\MortyCountsBundle\Factory\PushGatewayFactory;
-use Comsave\MortyCountsBundle\Factory\RedisStorageAdapterFactory;
 use Comsave\MortyCountsBundle\Services\PrometheusClient;
 use Comsave\MortyCountsBundle\Services\PushGatewayClient;
-use PHPUnit\Framework\TestCase;
-use Prometheus\CollectorRegistry;
+use GuzzleHttp\Exception\GuzzleException;
+use Prometheus\Exception\MetricNotFoundException;
+use Prometheus\Exception\MetricsRegistrationException;
+use Prometheus\Exception\StorageException;
 
-class PrometheusSingleNodePushTest extends TestCase
+class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
 {
     /** @var PrometheusClient */
     private $prometheusClient;
@@ -22,39 +20,22 @@ class PrometheusSingleNodePushTest extends TestCase
     /** @var string */
     private $jobName = 'service_job';
 
-    /** @var string */
-    private $instanceName = '127.0.0.1:9000';
-
     public function setUp(): void
     {
-        $this->prometheusClient = new PrometheusClient(
-            'prometheus:9091',
-            JmsSerializerFactory::build(),
-            GuzzleHttpClientFactory::build()
-        );
-
-        $registryStorageAdapter = RedisStorageAdapterFactory::build('redis', 6379);
-        $registry = new CollectorRegistry($registryStorageAdapter);
-
-        $this->pushGatewayClient = new PushGatewayClient(
-            $registry,
-            $registryStorageAdapter,
-            PushGatewayFactory::build('pushgateway:9191'),
-            $this->instanceName
-        );
-
+        $this->prometheusClient = static::buildPrometheusClient('prometheus:9091');
+        $this->pushGatewayClient = self::buildPushGatewayClient('pushgateway:9191');
         $this->pushGatewayClient->flush();
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws MetricsRegistrationException
+     * @throws StorageException
      */
     public function testPushesOneCounterMetric(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_1_' . date('YmdHis');
+        $metricName = 'some_counter_1_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
@@ -68,9 +49,11 @@ class PrometheusSingleNodePushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query([
-            'query' => $metricFullName,
-        ]);
+        $response = $this->prometheusClient->query(
+            [
+                'query' => $metricFullName,
+            ]
+        );
 //        var_dump($response);
         $results = $response->getData()->getResults();
 
@@ -81,15 +64,15 @@ class PrometheusSingleNodePushTest extends TestCase
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\MetricNotFoundException
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws MetricNotFoundException
+     * @throws MetricsRegistrationException
+     * @throws StorageException
      */
     public function testPushesCounterMetricAndIncreases(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_2_' . date('YmdHis');
+        $metricName = 'some_counter_2_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
         $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
@@ -103,9 +86,11 @@ class PrometheusSingleNodePushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query([
-            'query' => $metricFullName,
-        ]);
+        $response = $this->prometheusClient->query(
+            [
+                'query' => $metricFullName,
+            ]
+        );
 //        var_dump($response);
         $results = $response->getData()->getResults();
 
@@ -125,9 +110,11 @@ class PrometheusSingleNodePushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $results = $this->prometheusClient->query([
-            'query' => $metricFullName,
-        ])->getData()->getResults();
+        $results = $this->prometheusClient->query(
+            [
+                'query' => $metricFullName,
+            ]
+        )->getData()->getResults();
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);

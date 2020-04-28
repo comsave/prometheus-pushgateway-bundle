@@ -2,53 +2,27 @@
 
 namespace Comsave\Tests\Integration;
 
-use Comsave\MortyCountsBundle\Factory\GuzzleHttpClientFactory;
-use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
-use Comsave\MortyCountsBundle\Factory\PushGatewayFactory;
-use Comsave\MortyCountsBundle\Factory\RedisStorageAdapterFactory;
-use Comsave\MortyCountsBundle\Services\PrometheusClient;
-use Comsave\MortyCountsBundle\Services\PushGatewayClient;
-use PHPUnit\Framework\TestCase;
-use Prometheus\CollectorRegistry;
+use GuzzleHttp\Exception\GuzzleException;
+use Prometheus\Exception\MetricNotFoundException;
+use Prometheus\Exception\MetricsRegistrationException;
+use Prometheus\Exception\StorageException;
 
-class PrometheusMultiNodeHaProxyPushTest extends TestCase
+class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTest
 {
     /** @var string */
     private $jobName = 'service_job';
 
-    public static function buildPrometheusClient(string $prometheusUrl): PrometheusClient
-    {
-        return new PrometheusClient(
-            $prometheusUrl,
-            JmsSerializerFactory::build(),
-            GuzzleHttpClientFactory::build()
-        );
-    }
-
-    public static function buildPushGatewayClient(string $pushGatewayUrl): PushGatewayClient
-    {
-        $registryStorageAdapter = RedisStorageAdapterFactory::build('redis', 6379);
-        $registry = new CollectorRegistry($registryStorageAdapter);
-
-        return new PushGatewayClient(
-            $registry,
-            $registryStorageAdapter,
-            PushGatewayFactory::build($pushGatewayUrl),
-            '127.0.0.1:9000'
-        );
-    }
-
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws MetricsRegistrationException
+     * @throws StorageException
      */
     public function testPushesOneCounterMetric(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_1_' . date('YmdHis');
+        $metricName = 'some_counter_1_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
-        var_dump($metricFullName);
+//        var_dump($metricFullName);
 
         $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
         $pushGateway1->flush();
@@ -64,9 +38,11 @@ class PrometheusMultiNodeHaProxyPushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query([
-            'query' => $metricFullName,
-        ]);
+        $response = static::buildPrometheusClient('haproxy:9090')->query(
+            [
+                'query' => $metricFullName,
+            ]
+        );
 //        var_dump($response);
         $results = $response->getData()->getResults();
 
@@ -77,17 +53,17 @@ class PrometheusMultiNodeHaProxyPushTest extends TestCase
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Prometheus\Exception\MetricNotFoundException
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     * @throws \Prometheus\Exception\StorageException
+     * @throws GuzzleException
+     * @throws MetricNotFoundException
+     * @throws MetricsRegistrationException
+     * @throws StorageException
      */
     public function testPushesCounterMetricAndIncreases(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_2_' . date('YmdHis');
+        $metricName = 'some_counter_2_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
-        var_dump($metricFullName);
+//        var_dump($metricFullName);
 
         $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
         $pushGateway1->flush();
@@ -103,9 +79,11 @@ class PrometheusMultiNodeHaProxyPushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query([
-            'query' => $metricFullName,
-        ]);
+        $response = static::buildPrometheusClient('haproxy:9090')->query(
+            [
+                'query' => $metricFullName,
+            ]
+        );
 //        var_dump($response);
         $results = $response->getData()->getResults();
 
@@ -125,9 +103,11 @@ class PrometheusMultiNodeHaProxyPushTest extends TestCase
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query([
-            'query' => $metricFullName,
-        ]);
+        $response = static::buildPrometheusClient('haproxy:9090')->query(
+            [
+                'query' => $metricFullName,
+            ]
+        );
 //        var_dump($response);
         $results = $response->getData()->getResults();
 
