@@ -12,7 +12,6 @@ scrape_configs:
     static_configs:
       - targets:
           - 'prometheus:9091'
-#          - 'prometheus2:9092'
           - 'prometheus3:9093'
 
   - job_name: 'pushgateway'
