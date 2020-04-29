@@ -11,13 +11,13 @@ class PushGateway extends \Prometheus\PushGateway
     /** @var string */
     private $address;
 
-    /** @var string */
+    /** @var string|null */
     private $username;
 
-    /** @var string */
+    /** @var string|null */
     private $password;
 
-    private static $requestOptions =[
+    private static $requestOptions = [
         'headers' => [
             'Content-Type' => RenderTextFormat::MIME_TYPE,
         ],
@@ -25,6 +25,12 @@ class PushGateway extends \Prometheus\PushGateway
         'timeout' => 20,
     ];
 
+    /**
+     * @param string $address
+     * @param null|string $username
+     * @param null|string $password
+     * @codeCoverageIgnore
+     */
     public function __construct(string $address, ?string $username = null, ?string $password = null)
     {
         parent::__construct($address);
