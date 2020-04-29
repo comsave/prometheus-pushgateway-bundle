@@ -69,7 +69,7 @@ with Diagram(name="Basic Prometheus Cluster Setup", show=False):
             app_redis
         ]
 
-    with Cluster("Prometheus"):
+    with Cluster("Prometheus Cluster"):
         push1 = ECS('pushgateway')
         prom1 = Prometheus('prometheus')
 
