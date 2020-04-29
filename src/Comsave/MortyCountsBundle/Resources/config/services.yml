@@ -17,11 +17,6 @@ services:
     resource: '../src/*'
     exclude: '../src/**/{Enum,Kernel.php}'
 
-  Prometheus\PushGateway:
-    factory: ['Comsave\MortyCountsBundle\PushGatewayFactory', 'build']
-    arguments:
-      $pushGatewayUrl: '%morty_counts_pushgateway_url%']
-
   Prometheus\Storage\Redis:
     factory: ['Comsave\MortyCountsBundle\RedisStorageAdapterFactory', 'build']
     arguments:
@@ -43,6 +38,11 @@ services:
     autoconfigure: true
     arguments:
       $prometheusJobNames: '%morty_counts_prometheus_jobs%'
+
+  Comsave\MortyCountsBundle\Services\PushGateway:
+    factory: ['Comsave\MortyCountsBundle\PushGatewayFactory', 'build']
+    arguments:
+      $pushGatewayUrl: '%morty_counts_pushgateway_url%']
 
   Comsave\MortyCountsBundle\Services\PushGatewayClient:
     autowire: true

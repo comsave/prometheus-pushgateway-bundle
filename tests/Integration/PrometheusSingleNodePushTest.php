@@ -38,7 +38,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
         $metricName = 'some_counter_1_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -75,7 +75,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
         $metricName = 'some_counter_2_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->getRegistry()->registerCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName,
             'it increases',

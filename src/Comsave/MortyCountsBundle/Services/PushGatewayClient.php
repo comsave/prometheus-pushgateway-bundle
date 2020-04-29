@@ -10,7 +10,6 @@ use Prometheus\Exception\MetricsRegistrationException;
 use Prometheus\Exception\StorageException;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
-use Prometheus\PushGateway;
 use Prometheus\Storage\Redis;
 
 class PushGatewayClient
@@ -86,7 +85,7 @@ class PushGatewayClient
     public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
     {
         try {
-            $counter = $this->getRegistry()->getCounter($namespace, $name);
+            $counter = $this->registry->getCounter($namespace, $name);
         }
         catch (MetricNotFoundException $ex) {
             // todo: try to fetch from prometheus the initial value

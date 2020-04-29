@@ -2,7 +2,7 @@
 
 namespace Comsave\MortyCountsBundle\Factory;
 
-use Prometheus\PushGateway;
+use Comsave\MortyCountsBundle\Services\PushGateway;
 
 class PushGatewayFactory
 {
