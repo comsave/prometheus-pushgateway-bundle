@@ -1,6 +1,8 @@
 # morty-counts
 
-Teaching Morty how to count and sending the results to Prometheus. + High Availability Option
+## Symfony Prometheus + PushGateway integration
+
+Teaching Morty how to count and sending the results to Prometheus. +High Availability Setup 
 
 ## Requirements
 
@@ -10,19 +12,23 @@ Teaching Morty how to count and sending the results to Prometheus. + High Availa
 
 ## How does it work?
 
-### Single-node Prometheus + Pushgateway
+### Single Node Prometheus + Pushgateway
+
+
 
 ![](./images/basic_prometheus_cluster_setup.png)
 
-### Multi-node Prometheus + Pushgateway
+### Multi-Node Prometheus + Pushgateway Cluster
 
-todo details
+
 
 ![](./images/advanced_prometheus_cluster_setup.png)
 
 ## Development
 
-Start `docker-compose up --remove-orphans -d --build`
+Start single node `docker-compose up -d`
+
+Or multi node     `docker-compose up -f docker-compose.multi-node.yml -d`
 
 Tests `docker exec $(docker ps | grep _php | awk '{print $1}') vendor/bin/phpunit tests`
 
