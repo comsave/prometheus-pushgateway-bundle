@@ -5,6 +5,7 @@ namespace Comsave\MortyCountsBundle\Services;
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\CollectorRegistry;
 use Prometheus\Counter;
+use Prometheus\Exception\MetricNotFoundException;
 use Prometheus\Exception\MetricsRegistrationException;
 use Prometheus\Exception\StorageException;
 use Prometheus\Gauge;
@@ -84,12 +85,21 @@ class PushGatewayClient
      */
     public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
     {
-        return $this->registry->getOrRegisterCounter(
-            $namespace,
-            $name,
-            $help,
-            $labels
-        );
+        try {
+            $counter = $this->getRegistry()->getCounter($namespace, $name);
+        }
+        catch (MetricNotFoundException $ex) {
+            // todo: try to fetch from prometheus the initial value
+
+            $counter = $this->registry->registerCounter(
+                $namespace,
+                $name,
+                $help,
+                $labels
+            );
+        }
+
+        return $counter;
     }
 
     /**
@@ -117,11 +127,6 @@ class PushGatewayClient
             $labels,
             $buckets
         );
-    }
-
-    public function getRegistry(): CollectorRegistry
-    {
-        return $this->registry;
     }
 
     /**

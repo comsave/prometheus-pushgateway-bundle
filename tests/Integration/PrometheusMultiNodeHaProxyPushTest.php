@@ -27,7 +27,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
         $pushGateway1->flush();
 
-        $counter = $pushGateway1->getRegistry()->registerCounter(
+        $counter = $pushGateway1->counter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -68,7 +68,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
         $pushGateway1->flush();
 
-        $counter = $pushGateway1->getRegistry()->registerCounter(
+        $counter = $pushGateway1->counter(
             $metricNamespace,
             $metricName,
             'it increases',
@@ -92,9 +92,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
 
-        // todo: integrate initial (last) value fetch for the COUNTER
-        // todo: this should work even after clearing redis cache which should be done after every push
-        $counter = $pushGateway1->getRegistry()->getCounter(
+        $counter = $pushGateway1->counter(
             $metricNamespace,
             $metricName
         );

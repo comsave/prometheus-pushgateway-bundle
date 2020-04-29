@@ -99,9 +99,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(5, $results[0]->getValue());
 
-        // todo: integrate initial (last) value fetch for the COUNTER
-        // todo: this should work even after clearing redis cache which should be done after every push
-        $counter = $this->pushGatewayClient->getRegistry()->getCounter(
+        $counter = $this->pushGatewayClient->counter(
             $metricNamespace,
             $metricName
         );
