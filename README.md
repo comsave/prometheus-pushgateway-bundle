@@ -14,7 +14,11 @@ Teaching Morty how to count and sending the results to Prometheus. +High Availab
 
 ### Single Node Prometheus + Pushgateway
 
+Single node is pretty straightforward. 
 
+1. Use `PushGatewayClient` to create a metric. Metric is stored in `Redis`.
+2. Use `PushGatewayClient` can be pushed manually or with a command. After push metrics stored in Redis are transported to the actual `PushGateway` service.
+3. `Prometheus` periodically pulls in new metrics from `PushGateway`.
 
 ![](./images/basic_prometheus_cluster_setup.png)
 
