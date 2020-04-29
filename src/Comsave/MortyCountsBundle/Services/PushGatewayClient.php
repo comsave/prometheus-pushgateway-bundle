@@ -135,9 +135,4 @@ class PushGatewayClient
     {
         $this->registryStorageAdapter->flushRedis();
     }
-
-    public function setPrometheusInstanceName(string $prometheusInstanceName): void
-    {
-        $this->prometheusInstanceName = $prometheusInstanceName;
-    }
 }

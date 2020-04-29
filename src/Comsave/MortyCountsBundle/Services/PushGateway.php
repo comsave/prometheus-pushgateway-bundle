@@ -3,10 +3,11 @@
 namespace Comsave\MortyCountsBundle\Services;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
 
-class PushGateway extends \Prometheus\PushGateway
+class PushGateway
 {
     /** @var string */
     private $address;
@@ -33,7 +34,7 @@ class PushGateway extends \Prometheus\PushGateway
      */
     public function __construct(string $address, ?string $username = null, ?string $password = null)
     {
-        parent::__construct($address);
+        $this->address = $address;
         $this->username = $username;
         $this->password = $password;
     }
@@ -57,12 +58,53 @@ class PushGateway extends \Prometheus\PushGateway
         return $url;
     }
 
-    public function buildClient(): Client
+    private function buildClient(): Client
     {
         return new Client();
     }
 
-    /** @inheritDoc */
+
+    /**
+     * Pushes all metrics in a Collector, replacing all those with the same job.
+     * @param CollectorRegistry $collectorRegistry
+     * @param string $job
+     * @param array $groupingKey
+     * @throws GuzzleException
+     */
+    public function push(CollectorRegistry $collectorRegistry, string $job, array $groupingKey = null): void
+    {
+        $this->doRequest($collectorRegistry, $job, $groupingKey, 'put');
+    }
+
+    /**
+     * Pushes all metrics in a Collector, replacing only previously pushed metrics of the same name and job.
+     * @param CollectorRegistry $collectorRegistry
+     * @param $job
+     * @param $groupingKey
+     * @throws GuzzleException
+     */
+    public function pushAdd(CollectorRegistry $collectorRegistry, string $job, array $groupingKey = null): void
+    {
+        $this->doRequest($collectorRegistry, $job, $groupingKey, 'post');
+    }
+
+    /**
+     * @param string $job
+     * @param array $groupingKey
+     * @throws GuzzleException
+     */
+    public function delete(string $job, array $groupingKey = null): void
+    {
+        $this->doRequest(null, $job, $groupingKey, 'delete');
+    }
+
+    /**
+     * @param CollectorRegistry $collectorRegistry
+     * @param string $job
+     * @param array $groupingKey
+     * @param string $method
+     * @throws GuzzleException
+     */
     private function doRequest(?CollectorRegistry $collectorRegistry, string $job, array $groupingKey, $method): void
     {
         $requestOptions = static::$requestOptions;
@@ -75,8 +117,7 @@ class PushGateway extends \Prometheus\PushGateway
         }
 
         if ($method != 'delete') {
-            $renderer = new RenderTextFormat();
-            $requestOptions['body'] = $renderer->render($collectorRegistry->getMetricFamilySamples());
+            $requestOptions['body'] = (new RenderTextFormat())->render($collectorRegistry->getMetricFamilySamples());
         }
 
         $response = $this->buildClient()->request(
