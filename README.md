@@ -24,7 +24,11 @@ Single node is pretty straightforward.
 
 ### Multi-Node Prometheus + Pushgateway Cluster
 
+Multi-node set up works with the basics described above, with a couple exceptions:
 
+1. There's an `Haproxy` (or other load balancer) that decides which `PushGateway` will receive the `push`.
+2. Each `Prometheus` in every node pulls from every `PushGateway`. That way each `Prometheus` has the latest metrics.
+3. Each `Prometheus` pulls (federates) from another 2 `Prometheus` nodes but less often. This ensures data integrity (sort of replication).
 
 ![](./images/advanced_prometheus_cluster_setup.png)
 
