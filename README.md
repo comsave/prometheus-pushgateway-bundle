@@ -1,4 +1,4 @@
-# morty-counts
+# Morty Counts!
 
 ## Symfony Prometheus + PushGateway integration
 
