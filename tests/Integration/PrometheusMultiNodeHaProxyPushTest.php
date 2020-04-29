@@ -12,6 +12,12 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
     /** @var string */
     private $jobName = 'service_job';
 
+    private $nodes = [
+        1 => 'prometheus:9091',
+        2 => 'prometheus2:9092',
+        3 => 'prometheus3:9093',
+    ];
+
     /**
      * @throws GuzzleException
      * @throws MetricsRegistrationException
@@ -38,18 +44,18 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query(
-            [
+        foreach($this->nodes as $node => $server) {
+            $response = static::buildPrometheusClient($server)->query([
                 'query' => $metricFullName,
-            ]
-        );
-//        var_dump($response);
-        $results = $response->getData()->getResults();
+            ]);
+//            var_dump($response);
+            $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results, 'Node 1 results invalid.');
-        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
-        $this->assertEquals('blue', $results[0]->getMetric()['type']);
-        $this->assertEquals(5, $results[0]->getValue());
+            $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
+            $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+            $this->assertEquals('blue', $results[0]->getMetric()['type']);
+            $this->assertEquals(5, $results[0]->getValue());
+        }
     }
 
     /**
@@ -79,18 +85,18 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query(
-            [
+        foreach($this->nodes as $node => $server) {
+            $response = static::buildPrometheusClient($server)->query([
                 'query' => $metricFullName,
-            ]
-        );
-//        var_dump($response);
-        $results = $response->getData()->getResults();
+            ]);
+//            var_dump($response);
+            $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results, 'Node 1 results invalid.');
-        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
-        $this->assertEquals('blue', $results[0]->getMetric()['type']);
-        $this->assertEquals(5, $results[0]->getValue());
+            $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
+            $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+            $this->assertEquals('blue', $results[0]->getMetric()['type']);
+            $this->assertEquals(5, $results[0]->getValue());
+        }
 
         $counter = $pushGateway1->counter(
             $metricNamespace,
@@ -101,17 +107,17 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = static::buildPrometheusClient('haproxy:9090')->query(
-            [
+        foreach($this->nodes as $node => $server) {
+            $response = static::buildPrometheusClient($server)->query([
                 'query' => $metricFullName,
-            ]
-        );
-//        var_dump($response);
-        $results = $response->getData()->getResults();
+            ]);
+//            var_dump($response);
+            $results = $response->getData()->getResults();
 
-        $this->assertCount(1, $results, 'Node 1 results invalid.');
-        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
-        $this->assertEquals('blue', $results[0]->getMetric()['type']);
-        $this->assertEquals(6, $results[0]->getValue());
+            $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
+            $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+            $this->assertEquals('blue', $results[0]->getMetric()['type']);
+            $this->assertEquals(6, $results[0]->getValue());
+        }
     }
 }
