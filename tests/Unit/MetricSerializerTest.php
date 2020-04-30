@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\Tests\Unit;
+namespace Comsave\MortyCountsBundle\Tests\Unit;
 
 use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
 use Comsave\MortyCountsBundle\Model\PrometheusMetric;

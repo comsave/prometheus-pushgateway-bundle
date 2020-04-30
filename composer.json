@@ -1,25 +1,34 @@
 {
   "name": "comsave/morty-counts",
-  "description": "Symfony integration to push Prometheus metrics",
+  "description": "Symfony integration to push metrics to Prometheus + PushGateway",
   "license": "MIT",
   "require": {
-    "ext-redis": "*",
+    "php": ">=7.3",
     "endclothing/prometheus_client_php": "^1.0",
     "symfony/http-kernel": "^3.4|^4.4",
     "symfony/console": "^3.4|^4.4",
-    "jms/serializer": "^3.0|^2.0"
+    "jms/serializer": "^3.0|^2.0",
+    "comsave/dependency-injection-config-to-parameters": "^0.1.0",
+    "symfony/config": "^3.4|^4.4"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.1"
+    "phpunit/phpunit": "^8.0",
+    "spatie/phpunit-snapshot-assertions": "^3.0"
   },
   "autoload": {
     "psr-4": {
-      "Comsave\\": "src/Comsave"
+      "Comsave\\MortyCountsBundle\\": "src/Comsave/MortyCountsBundle"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Comsave\\Tests\\": "tests"
+      "Comsave\\MortyCountsBundle\\Tests\\": "tests"
     }
-  }
+  },
+  "authors": [
+    {
+      "name": "Vaidas Bagdonas",
+      "email": "vaidas.bagdonas@comsave.com"
+    }
+  ]
 }

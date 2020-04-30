@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\Tests\Integration;
+namespace Comsave\MortyCountsBundle\Tests\Integration;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\Exception\MetricNotFoundException;

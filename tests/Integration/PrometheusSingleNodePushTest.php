@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\Tests\Integration;
+namespace Comsave\MortyCountsBundle\Tests\Integration;
 
 use Comsave\MortyCountsBundle\Services\PrometheusClient;
 use Comsave\MortyCountsBundle\Services\PushGatewayClient;

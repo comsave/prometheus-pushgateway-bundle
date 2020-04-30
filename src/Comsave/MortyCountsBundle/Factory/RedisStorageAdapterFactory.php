@@ -6,13 +6,14 @@ use Prometheus\Storage\Redis;
 
 class RedisStorageAdapterFactory
 {
-    public static function build(string $redisHost, int $redisPort, ?string $redisPassword = null): Redis
+    public static function build(string $redisUrl): Redis
     {
+        list($redisHost, $redisPort) = explode(':', $redisUrl);
+
         return new Redis(
             [
                 'host' => $redisHost,
                 'port' => $redisPort,
-                'password' => $redisPassword
             ]
         );
     }

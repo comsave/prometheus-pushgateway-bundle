@@ -10,6 +10,27 @@ Teaching Morty how to count and sending the results to Prometheus. +High Availab
 
 2. `bin/console comsave:prometheus:push` cronjob: to push data periodically to Prometheus Pushgateway
 
+## Configuration
+
+In your `services.yml` add:
+
+```yaml
+comsave_morty_counts:
+    prometheus:
+        host: 'prometheus:9090'
+        username: 'admin'
+        password: 'v'
+        instance: 'moms_basement:6666'
+        jobs: 
+            - 'metric_job_name'
+            - 'metric_job_name2'
+    pushgateway:
+        host: 'pushgateway:9191'
+        username: 'admin2'
+        password: 'duuude2'
+        redis: 'redis:6379'
+```
+
 ## How does it work?
 
 ### Single Node Prometheus + Pushgateway

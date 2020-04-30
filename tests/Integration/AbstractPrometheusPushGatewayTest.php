@@ -1,12 +1,12 @@
 <?php
 
-namespace Comsave\Tests\Integration;
+namespace Comsave\MortyCountsBundle\Tests\Integration;
 
 use Comsave\MortyCountsBundle\Factory\GuzzleHttpClientFactory;
 use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
-use Comsave\MortyCountsBundle\Factory\PushGatewayFactory;
 use Comsave\MortyCountsBundle\Factory\RedisStorageAdapterFactory;
 use Comsave\MortyCountsBundle\Services\PrometheusClient;
+use Comsave\MortyCountsBundle\Services\PushGateway;
 use Comsave\MortyCountsBundle\Services\PushGatewayClient;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
@@ -24,13 +24,13 @@ abstract class AbstractPrometheusPushGatewayTest extends TestCase
 
     public static function buildPushGatewayClient(string $pushGatewayUrl): PushGatewayClient
     {
-        $registryStorageAdapter = RedisStorageAdapterFactory::build('redis', 6379);
+        $registryStorageAdapter = RedisStorageAdapterFactory::build('redis:6379');
         $registry = new CollectorRegistry($registryStorageAdapter);
 
         return new PushGatewayClient(
             $registry,
             $registryStorageAdapter,
-            PushGatewayFactory::build($pushGatewayUrl),
+            new PushGateway($pushGatewayUrl),
             '127.0.0.1:9000'
         );
     }
