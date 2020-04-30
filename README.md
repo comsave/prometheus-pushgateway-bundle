@@ -19,7 +19,7 @@ comsave_morty_counts:
     prometheus:
         host: 'prometheus:9090'
         username: 'admin'
-        password: 'v'
+        password: 'duuude'
         instance: 'moms_basement:6666'
         jobs: 
             - 'metric_job_name'
