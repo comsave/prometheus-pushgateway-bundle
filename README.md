@@ -18,16 +18,16 @@ In your `services.yml` add:
 comsave_morty_counts:
     prometheus:
         host: 'prometheus:9090'
-        username: 'admin'
-        password: 'duuude'
-        instance: 'moms_basement:6666'
+        username: 'admin' # optional
+        password: 'duuude' # optional
+        instance: 'moms_basement:6666' # your server host/name/etc
         jobs: 
             - 'metric_job_name'
             - 'metric_job_name2'
     pushgateway:
         host: 'pushgateway:9191'
-        username: 'admin2'
-        password: 'duuude2'
+        username: 'admin2' # optional
+        password: 'duuude2' # optional
         redis: 'redis:6379'
 ```
 
