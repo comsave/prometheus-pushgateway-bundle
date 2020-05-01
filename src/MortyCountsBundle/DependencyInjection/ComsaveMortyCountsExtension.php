@@ -10,17 +10,17 @@ use Symfony\Component\Config\FileLocator;
 
 class ComsaveMortyCountsExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $containerBuilder)
     {
-        $configuration = new Configuration();
+        $processedConfigs = $this->processConfiguration(new Configuration(), $configs);
 
         DependencyInjectionConfigsToParams::setupConfigurationParameters(
-            $container,
-            $this->processConfiguration($configuration, $configs),
+            $containerBuilder,
+            $processedConfigs,
             Configuration::$configurationTreeRoot
         );
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($containerBuilder, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 }
