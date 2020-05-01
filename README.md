@@ -31,6 +31,11 @@ comsave_morty_counts:
         redis: 'redis:6379'
 ```
 
+Add the bundle to your Symfony kernel.
+```php
+new Comsave\MortyCountsBundle\ComsaveMortyCountsBundle(),
+```
+
 ## How does it work?
 
 ### Single Node Prometheus + Pushgateway
