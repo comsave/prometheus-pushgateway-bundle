@@ -3,10 +3,11 @@
 namespace Comsave\MortyCountsBundle\Factory;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
-class GuzzleHttpClientFactory
+class HttpClientFactory
 {
-    public static function build(array $options = []): Client
+    public static function build(array $options = []): ClientInterface
     {
         return new Client($options);
     }

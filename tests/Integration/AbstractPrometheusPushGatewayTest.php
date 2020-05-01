@@ -2,7 +2,7 @@
 
 namespace Comsave\MortyCountsBundle\Tests\Integration;
 
-use Comsave\MortyCountsBundle\Factory\GuzzleHttpClientFactory;
+use Comsave\MortyCountsBundle\Factory\HttpClientFactory;
 use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
 use Comsave\MortyCountsBundle\Factory\RedisStorageAdapterFactory;
 use Comsave\MortyCountsBundle\Services\PrometheusClient;
@@ -18,7 +18,7 @@ abstract class AbstractPrometheusPushGatewayTest extends TestCase
         return new PrometheusClient(
             $prometheusUrl,
             JmsSerializerFactory::build(),
-            GuzzleHttpClientFactory::build()
+            HttpClientFactory::build()
         );
     }
 
