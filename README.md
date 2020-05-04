@@ -1,8 +1,8 @@
-# Morty Counts!
+# PrometheusPushGatewayBundle
 
 ## Symfony Prometheus + PushGateway integration
 
-Teaching Morty how to count and sending the results to Prometheus. +High Availability Setup 
+Send metrics to Prometheus. +High Availability Setup 
 
 ## Requirements
 
@@ -15,7 +15,7 @@ Teaching Morty how to count and sending the results to Prometheus. +High Availab
 In your `services.yml` add:
 
 ```yaml
-comsave_morty_counts:
+comsave_prometheus_pushgateway:
     prometheus:
         host: 'prometheus:9090'
         username: 'admin' # optional
