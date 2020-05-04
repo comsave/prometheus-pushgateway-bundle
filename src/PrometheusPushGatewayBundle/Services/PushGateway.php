@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Services;
+namespace Comsave\PrometheusPushGatewayBundle\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Model;
+namespace Comsave\PrometheusPushGatewayBundle\Model;
 
 use JMS\Serializer\Annotation as JMS;
 
@@ -14,7 +14,7 @@ class PrometheusResponse
 
     /**
      * @var PrometheusResponseData
-     * @JMS\Type("Comsave\MortyCountsBundle\Model\PrometheusResponseData")
+     * @JMS\Type("Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponseData")
      */
     private $data;
 

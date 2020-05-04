@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Services;
+namespace Comsave\PrometheusPushGatewayBundle\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\CollectorRegistry;
@@ -23,6 +23,9 @@ class PushGatewayClient
     /** @var PushGateway */
     private $pushGateway;
 
+    /** @var PrometheusClient */
+    private $prometheusClient;
+
     /** @var string */
     private $prometheusInstanceName;
 
@@ -30,6 +33,7 @@ class PushGatewayClient
      * @param CollectorRegistry $registry
      * @param Redis $registryStorageAdapter
      * @param PushGateway $pushGateway
+     * @param PrometheusClient $prometheusClient
      * @param string $prometheusInstanceName
      * @codeCoverageIgnore
      */
@@ -37,11 +41,13 @@ class PushGatewayClient
         CollectorRegistry $registry,
         Redis $registryStorageAdapter,
         PushGateway $pushGateway,
+        PrometheusClient $prometheusClient,
         string $prometheusInstanceName
     ) {
         $this->registry = $registry;
         $this->registryStorageAdapter = $registryStorageAdapter;
         $this->pushGateway = $pushGateway;
+        $this->prometheusClient = $prometheusClient;
         $this->prometheusInstanceName = $prometheusInstanceName;
     }
 
@@ -82,20 +88,33 @@ class PushGatewayClient
     /**
      * @throws MetricsRegistrationException
      */
-    public function counter(string $namespace, string $name, ?string $help = null, array $labels = []): Counter
+    public function counter(string $namespace, string $name, ?string $help = null, array $labels = [], bool $fetchCurrent = false): Counter
     {
         try {
             $counter = $this->registry->getCounter($namespace, $name);
         }
         catch (MetricNotFoundException $ex) {
-            // todo: try to fetch from prometheus the initial value
-
             $counter = $this->registry->registerCounter(
                 $namespace,
                 $name,
                 $help,
                 $labels
             );
+
+            if($fetchCurrent) {
+//                try {
+                    $prometheusResponse = $this->prometheusClient->query(
+                        [
+                            'query' => sprintf('morty_%s_%s', $namespace, $name),
+                        ]
+                    );
+                    $existingValue = (int)$prometheusResponse->getData()->getResults()[0]->getValue();
+                    var_dump($existingValue);
+                    $counter->incBy($existingValue);
+//                } catch (GuzzleException $ex) {
+////                     log a warning
+//                }
+            }
         }
 
         return $counter;
@@ -126,6 +145,11 @@ class PushGatewayClient
             $labels,
             $buckets
         );
+    }
+
+    public function getPrometheusClient(): PrometheusClient
+    {
+        return $this->prometheusClient;
     }
 
     /**

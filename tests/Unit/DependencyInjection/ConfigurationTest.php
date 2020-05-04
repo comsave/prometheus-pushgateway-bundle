@@ -1,8 +1,8 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Tests\Unit\DependencyInjection;
+namespace Comsave\PrometheusPushGatewayBundle\Tests\Unit\DependencyInjection;
 
-use Comsave\MortyCountsBundle\DependencyInjection\Configuration;
+use Comsave\PrometheusPushGatewayBundle\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 

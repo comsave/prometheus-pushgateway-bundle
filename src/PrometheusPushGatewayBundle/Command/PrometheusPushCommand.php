@@ -1,8 +1,8 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Command;
+namespace Comsave\PrometheusPushGatewayBundle\Command;
 
-use Comsave\MortyCountsBundle\Services\PushGatewayClient;
+use Comsave\PrometheusPushGatewayBundle\Services\PushGatewayClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\Exception\StorageException;
 use Symfony\Component\Console\Command\Command;

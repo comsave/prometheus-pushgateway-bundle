@@ -33,7 +33,7 @@ comsave_morty_counts:
 
 Add the bundle to your Symfony kernel.
 ```php
-new Comsave\MortyCountsBundle\ComsaveMortyCountsBundle(),
+new Comsave\PrometheusPushGatewayBundle\ComsavePrometheusPushGatewayBundle(),
 ```
 
 ## How does it work?
@@ -66,11 +66,6 @@ Or multi node     `docker-compose up -f docker-compose.multi-node.yml -d`
 
 Tests `docker exec $(docker ps | grep _php | awk '{print $1}') vendor/bin/phpunit tests`
 
-![](https://media.giphy.com/media/W35DnRbN4oDHIAApdk/giphy.gif)
-![](https://media.giphy.com/media/RH1IFq2GT0Oau8NRWX/giphy.gif)
-
 ## License
 
 MIT
-
-![](https://media.giphy.com/media/e6tJpLvjY8jXa/giphy.gif)

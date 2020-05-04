@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Model;
+namespace Comsave\PrometheusPushGatewayBundle\Model;
 
 use JMS\Serializer\Annotation as JMS;
 

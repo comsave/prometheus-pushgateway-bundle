@@ -1,13 +1,13 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\DependencyInjection;
+namespace Comsave\PrometheusPushGatewayBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public static $configurationTreeRoot = 'comsave_morty_counts';
+    public static $configurationTreeRoot = 'comsave_prometheus_pushgateway';
 
     public function getConfigTreeBuilder()
     {

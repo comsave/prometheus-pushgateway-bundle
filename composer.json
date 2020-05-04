@@ -1,5 +1,5 @@
 {
-  "name": "comsave/morty-counts",
+  "name": "comsave/prometheus-pushgateway-bundle",
   "description": "Symfony integration to push metrics to Prometheus + PushGateway",
   "license": "MIT",
   "require": {
@@ -17,12 +17,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Comsave\\MortyCountsBundle\\": "src/MortyCountsBundle"
+      "Comsave\\PrometheusPushGatewayBundle\\": "src/PrometheusPushGatewayBundle"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Comsave\\MortyCountsBundle\\Tests\\": "tests"
+      "Comsave\\PrometheusPushGatewayBundle\\Tests\\": "tests"
     }
   },
   "authors": [

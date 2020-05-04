@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Factory;
+namespace Comsave\PrometheusPushGatewayBundle\Factory;
 
 use Prometheus\Storage\Redis;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Services;
+namespace Comsave\PrometheusPushGatewayBundle\Services;
 
-use Comsave\MortyCountsBundle\Model\PrometheusResponse;
+use Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponse;
 use GuzzleHttp\ClientInterface;
 use JMS\Serializer\Serializer;
 
@@ -45,7 +45,6 @@ class PrometheusClient
         $this->username = $username;
         $this->password = $password;
     }
-
 
     public function query(array $arguments): PrometheusResponse
     {

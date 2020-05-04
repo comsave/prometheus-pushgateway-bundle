@@ -1,11 +1,11 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Tests\Unit;
+namespace Comsave\PrometheusPushGatewayBundle\Tests\Unit;
 
-use Comsave\MortyCountsBundle\Factory\JmsSerializerFactory;
-use Comsave\MortyCountsBundle\Model\PrometheusMetric;
-use Comsave\MortyCountsBundle\Model\PrometheusResponse;
-use Comsave\MortyCountsBundle\Model\PrometheusResponseDataResult;
+use Comsave\PrometheusPushGatewayBundle\Factory\JmsSerializerFactory;
+use Comsave\PrometheusPushGatewayBundle\Model\PrometheusMetric;
+use Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponse;
+use Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponseDataResult;
 use JMS\Serializer\Serializer;
 use PHPUnit\Framework\TestCase;
 

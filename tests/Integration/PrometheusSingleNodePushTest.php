@@ -1,9 +1,9 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Tests\Integration;
+namespace Comsave\PrometheusPushGatewayBundle\Tests\Integration;
 
-use Comsave\MortyCountsBundle\Services\PrometheusClient;
-use Comsave\MortyCountsBundle\Services\PushGatewayClient;
+use Comsave\PrometheusPushGatewayBundle\Services\PrometheusClient;
+use Comsave\PrometheusPushGatewayBundle\Services\PushGatewayClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\Exception\MetricNotFoundException;
 use Prometheus\Exception\MetricsRegistrationException;
@@ -22,8 +22,8 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
 
     public function setUp(): void
     {
-        $this->prometheusClient = static::buildPrometheusClient('prometheus:9091');
-        $this->pushGatewayClient = self::buildPushGatewayClient('pushgateway:9191');
+        $this->prometheusClient = static::buildPrometheusClient('prometheus:9090');
+        $this->pushGatewayClient = self::buildPushGatewayClient('pushgateway:9191', $this->prometheusClient);
         $this->pushGatewayClient->flush();
     }
 
@@ -118,5 +118,52 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
         $this->assertEquals('blue', $results[0]->getMetric()['type']);
         $this->assertEquals(6, $results[0]->getValue());
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws MetricsRegistrationException
+     * @throws StorageException
+     */
+    public function testPushesGetsExistingMetricFromPrometheusToIncrease(): void
+    {
+        $metricNamespace = 'test';
+        $metricName = 'some_counter_3';
+        $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
+
+        $counter = $this->pushGatewayClient->counter(
+            $metricNamespace,
+            $metricName,
+            'it increases',
+            ['type']
+        );
+        $counter->incBy(5, ['blue']);
+        $this->pushGatewayClient->push($this->jobName);
+//        $this->pushGatewayClient->flush(); // <----
+//
+//        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
+//
+//        $counter = $this->pushGatewayClient->counter(
+//            $metricNamespace,
+//            $metricName,
+//            'it increases',
+//            ['type'],
+//            true
+//        );
+//        $counter->incBy(2, ['blue']);
+//        $this->pushGatewayClient->push($this->jobName);
+
+        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
+
+        $results = $this->prometheusClient->query(
+            [
+                'query' => $metricFullName,
+            ]
+        )->getData()->getResults();
+
+        $this->assertCount(1, $results);
+        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+        $this->assertEquals('blue', $results[0]->getMetric()['type']);
+        $this->assertEquals(7, $results[0]->getValue());
     }
 }

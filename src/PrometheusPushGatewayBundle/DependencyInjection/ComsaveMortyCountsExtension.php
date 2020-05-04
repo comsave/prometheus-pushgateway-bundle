@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\DependencyInjection;
+namespace Comsave\PrometheusPushGatewayBundle\DependencyInjection;
 
 use Comsave\Tools\DependencyInjectionConfigsToParams;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\Config\FileLocator;
 
-class ComsaveMortyCountsExtension extends Extension
+class ComsavePrometheusPushGatewayExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $containerBuilder)
     {

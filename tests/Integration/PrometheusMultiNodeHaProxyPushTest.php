@@ -1,6 +1,6 @@
 <?php
 
-namespace Comsave\MortyCountsBundle\Tests\Integration;
+namespace Comsave\PrometheusPushGatewayBundle\Tests\Integration;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\Exception\MetricNotFoundException;
@@ -30,7 +30,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 //        var_dump($metricFullName);
 
-        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
+        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191', static::buildPrometheusClient('haproxy:9090'));
         $pushGateway1->flush();
 
         $counter = $pushGateway1->counter(
@@ -71,7 +71,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 //        var_dump($metricFullName);
 
-        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191');
+        $pushGateway1 = static::buildPushGatewayClient('haproxy:9191', static::buildPrometheusClient('haproxy:9090'));
         $pushGateway1->flush();
 
         $counter = $pushGateway1->counter(
