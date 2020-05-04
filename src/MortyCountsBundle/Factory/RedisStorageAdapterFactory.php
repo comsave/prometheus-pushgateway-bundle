@@ -13,7 +13,7 @@ class RedisStorageAdapterFactory
         return new Redis(
             [
                 'host' => $redisHost,
-                'port' => $redisPort,
+                'port' => (int)$redisPort,
             ]
         );
     }
