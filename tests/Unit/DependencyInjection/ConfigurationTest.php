@@ -18,10 +18,9 @@ class ConfigurationTest extends TestCase
                 'username' => 'admin',
                 'password' => 'duuude',
                 'instance' => 'moms_basement:6666',
-//                'jobs' => [
-//                    'intense_server',
-//                ],
-            // todo: fix jobs conf
+                'jobs' => [
+                    'intense_server',
+                ],
             ],
             'pushgateway' => [
                 'host' => 'pushgateway:9191',
@@ -45,10 +44,8 @@ class ConfigurationTest extends TestCase
             'prometheus' => [
                 'host' => 'prometheus:9090',
                 'instance' => 'moms_basement:6666',
-//                'jobs' => [
-//                    'intense_server',
-//                ],
-                // todo: fix jobs conf
+                'jobs' => [
+                ],
             ],
             'pushgateway' => [
                 'host' => 'pushgateway:9191',

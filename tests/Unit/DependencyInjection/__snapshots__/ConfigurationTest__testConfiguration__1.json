@@ -3,7 +3,10 @@
         "host": "prometheus:9090",
         "username": "admin",
         "password": "duuude",
-        "instance": "moms_basement:6666"
+        "instance": "moms_basement:6666",
+        "jobs": [
+            "intense_server"
+        ]
     },
     "pushgateway": {
         "host": "pushgateway:9191",
