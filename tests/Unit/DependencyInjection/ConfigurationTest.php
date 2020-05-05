@@ -64,23 +64,23 @@ class ConfigurationTest extends TestCase
                 'username' => 'admin',
                 'password' => 'duuude',
                 'instance' => 'moms_basement:6666',
-                'metrics' => [
-                    'api' => [
-                        'name' => 'orders',
-                        'type' => 'counter',
-                        'prefetch' => true,
-                        'labels' => [
-                            'order_id',
-                            'user_id',
-                        ],
-                    ],
-                ],
             ],
             'pushgateway' => [
                 'host' => 'pushgateway:9191',
                 'username' => 'admin2',
                 'password' => 'duuude2',
                 'redis' => 'redis:6379',
+            ],
+            'metrics' => [
+                'api' => [
+                    'name' => 'orders',
+                    'type' => 'counter',
+                    'prefetch' => true,
+                    'labels' => [
+                        'order_id',
+                        'user_id',
+                    ],
+                ],
             ],
         ];
 

@@ -3,13 +3,13 @@
         "host": "prometheus:9090",
         "username": "admin",
         "password": "duuude",
-        "instance": "moms_basement:6666",
-        "metrics": []
+        "instance": "moms_basement:6666"
     },
     "pushgateway": {
         "host": "pushgateway:9191",
         "username": "admin2",
         "password": "duuude2",
         "redis": "redis:6379"
-    }
+    },
+    "metrics": []
 }
