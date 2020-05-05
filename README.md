@@ -6,7 +6,7 @@ Send metrics to Prometheus. +High Availability Setup
 
 ## Requirements
 
-1. `Redis` (the service & the PHP extension): to act as a buffer before push and avoid latency in the code
+1. `Redis` (the service & the PHP extension): to act as a buffer before push and avoid latency in the code, and as a store for the current counter values. 
 
 2. `bin/console comsave:prometheus:push` cronjob: to push data periodically to Prometheus Pushgateway
 
