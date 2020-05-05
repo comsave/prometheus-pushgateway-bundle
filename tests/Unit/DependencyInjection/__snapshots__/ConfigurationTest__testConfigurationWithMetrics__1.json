@@ -4,7 +4,17 @@
         "username": "admin",
         "password": "duuude",
         "instance": "moms_basement:6666",
-        "metrics": []
+        "metrics": {
+            "api": {
+                "name": "orders",
+                "type": "counter",
+                "prefetch": true,
+                "labels": [
+                    "order_id",
+                    "user_id"
+                ]
+            }
+        }
     },
     "pushgateway": {
         "host": "pushgateway:9191",

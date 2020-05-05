@@ -21,9 +21,14 @@ comsave_prometheus_pushgateway:
         username: 'admin' # optional
         password: 'duuude' # optional
         instance: 'moms_basement:6666' # your server host/name/etc
-        jobs: 
-            - 'metric_job_name'
-            - 'metric_job_name2'
+        metrics: 
+          api: # metric namespace
+            - name: 'orders'
+              type: 'counter'
+              prefetch: true # prefetch current value from prometheus if missing in redis buffer; true by default
+              labels:
+                - 'order_id'
+                - 'user_id'
     pushgateway:
         host: 'pushgateway:9191'
         username: 'admin2' # optional
