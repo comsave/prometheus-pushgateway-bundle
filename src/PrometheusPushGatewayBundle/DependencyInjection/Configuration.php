@@ -48,7 +48,6 @@ class Configuration implements ConfigurationInterface
                                         ->defaultValue(true)
                                     ->end()
                                     ->arrayNode('labels')
-                                        ->useAttributeAsKey('key', false)
                                         ->prototype('scalar')->end()
                                     ->end()
                                 ->end()
