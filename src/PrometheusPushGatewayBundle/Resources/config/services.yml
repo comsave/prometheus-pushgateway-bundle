@@ -14,9 +14,9 @@ services:
     factory: ['Comsave\PrometheusPushGatewayBundle\Factory\RedisStorageAdapterFactory', 'build']
     arguments: ['%comsave_prometheus_pushgateway.pushgateway.redis%']
 
-  Prometheus\CollectorRegistry:
+  Comsave\PrometheusPushGatewayBundle\Prometheus\CollectorRegistry:
     autowire: false
-    arguments: ['@Prometheus\Storage\Redis']
+    arguments: ['@Symfony\Component\EventDispatcher\EventSubscriberInterface', '@Prometheus\Storage\Redis']
 
   GuzzleHttp\Client:
     factory: ['Comsave\PrometheusPushGatewayBundle\Factory\GuzzleHttpClientFactory', 'build']
