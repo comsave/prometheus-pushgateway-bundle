@@ -45,11 +45,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
         foreach($this->nodes as $node => $server) {
-            $response = static::buildPrometheusClient($server)->query([
-                'query' => $metricFullName,
-            ]);
-//            var_dump($response);
-            $results = $response->getData()->getResults();
+            $results = static::buildPrometheusClient($server)->query($metricFullName);
 
             $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
             $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -86,11 +82,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
         foreach($this->nodes as $node => $server) {
-            $response = static::buildPrometheusClient($server)->query([
-                'query' => $metricFullName,
-            ]);
-//            var_dump($response);
-            $results = $response->getData()->getResults();
+            $results = static::buildPrometheusClient($server)->query($metricFullName);
 
             $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
             $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -108,11 +100,7 @@ class PrometheusMultiNodeHaProxyPushTest extends AbstractPrometheusPushGatewayTe
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
         foreach($this->nodes as $node => $server) {
-            $response = static::buildPrometheusClient($server)->query([
-                'query' => $metricFullName,
-            ]);
-//            var_dump($response);
-            $results = $response->getData()->getResults();
+            $results = static::buildPrometheusClient($server)->query($metricFullName);
 
             $this->assertCount(1, $results, sprintf('Node %s results invalid.', $node));
             $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);

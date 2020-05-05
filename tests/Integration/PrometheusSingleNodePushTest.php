@@ -49,13 +49,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query(
-            [
-                'query' => $metricFullName,
-            ]
-        );
-//        var_dump($response);
-        $results = $response->getData()->getResults();
+        $results = $this->prometheusClient->query($metricFullName);
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -86,13 +80,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $response = $this->prometheusClient->query(
-            [
-                'query' => $metricFullName,
-            ]
-        );
-//        var_dump($response);
-        $results = $response->getData()->getResults();
+        $results = $this->prometheusClient->query($metricFullName);
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -108,11 +96,7 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
 
         sleep(2); // wait for Prometheus to pull the metrics from PushGateway
 
-        $results = $this->prometheusClient->query(
-            [
-                'query' => $metricFullName,
-            ]
-        )->getData()->getResults();
+        $results = $this->prometheusClient->query($metricFullName);
 
         $this->assertCount(1, $results);
         $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
@@ -128,42 +112,58 @@ class PrometheusSingleNodePushTest extends AbstractPrometheusPushGatewayTest
     public function testPushesGetsExistingMetricFromPrometheusToIncrease(): void
     {
         $metricNamespace = 'test';
-        $metricName = 'some_counter_3';
+        $metricName = 'some_counter_3_x';
+//        $metricName = 'some_counter_3_'.date('YmdHis');
         $metricFullName = sprintf('%s_%s', $metricNamespace, $metricName);
 
-        $counter = $this->pushGatewayClient->counter(
-            $metricNamespace,
-            $metricName,
-            'it increases',
-            ['type']
-        );
-        $counter->incBy(5, ['blue']);
-        $this->pushGatewayClient->push($this->jobName);
-//        $this->pushGatewayClient->flush(); // <----
+        $labels = ['order_id', 'user_id'];
+//        $counter = $this->pushGatewayClient->counter(
+//            $metricNamespace,
+//            $metricName,
+//            'it increases',
+//            $labels
+//        );
+//        $counter->inc([md5(mt_rand()), 'user_id_1']);
+//        $counter->inc([md5(mt_rand()), 'user_id_2']);
+//        $counter->inc([md5(mt_rand()), 'user_id_2']);
+//        $this->pushGatewayClient->push($this->jobName);
+//        $counter->inc([md5(mt_rand()), 'user_id_2']);
+//        $this->pushGatewayClient->push($this->jobName);
+////        $this->pushGatewayClient->flush();
 //
 //        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
-//
-//        $counter = $this->pushGatewayClient->counter(
+
+        $results = $this->prometheusClient->query(
+            sprintf('sum(%s{%s})', $metricFullName, $this->prometheusClient->requireLabels($labels)),
+        );
+
+        var_dump($results);
+        $this->assertCount(1, $results);
+//        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+//        $this->assertEquals('blue', $results[0]->getMetric()['type']);
+        $this->assertEquals(4, $results[0]->getValue());
+
+//        $counter2 = $this->pushGatewayClient->counter(
 //            $metricNamespace,
 //            $metricName,
 //            'it increases',
 //            ['type'],
 //            true
 //        );
-//        $counter->incBy(2, ['blue']);
+//        $counter2->incBy(2, ['blue']);
 //        $this->pushGatewayClient->push($this->jobName);
-
-        sleep(2); // wait for Prometheus to pull the metrics from PushGateway
-
-        $results = $this->prometheusClient->query(
-            [
-                'query' => $metricFullName,
-            ]
-        )->getData()->getResults();
-
-        $this->assertCount(1, $results);
-        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
-        $this->assertEquals('blue', $results[0]->getMetric()['type']);
-        $this->assertEquals(7, $results[0]->getValue());
+//
+//        sleep(2); // wait for Prometheus to pull the metrics frwom PushGateway
+//
+//        $results = $this->prometheusClient->query(
+//            [
+//                'query' => $metricFullName,
+//            ]
+//        );
+//
+//        $this->assertCount(1, $results);
+//        $this->assertEquals($metricFullName, $results[0]->getMetric()['__name__']);
+//        $this->assertEquals('blue', $results[0]->getMetric()['type']);
+//        $this->assertEquals(7, $results[0]->getValue());
     }
 }

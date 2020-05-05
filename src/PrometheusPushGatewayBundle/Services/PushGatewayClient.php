@@ -90,34 +90,12 @@ class PushGatewayClient
      */
     public function counter(string $namespace, string $name, ?string $help = null, array $labels = [], bool $fetchCurrent = false): Counter
     {
-        try {
-            $counter = $this->registry->getCounter($namespace, $name);
-        }
-        catch (MetricNotFoundException $ex) {
-            $counter = $this->registry->registerCounter(
-                $namespace,
-                $name,
-                $help,
-                $labels
-            );
-
-            if($fetchCurrent) {
-//                try {
-                    $prometheusResponse = $this->prometheusClient->query(
-                        [
-                            'query' => sprintf('morty_%s_%s', $namespace, $name),
-                        ]
-                    );
-                    $existingValue = (int)$prometheusResponse->getData()->getResults()[0]->getValue();
-                    var_dump($existingValue);
-                    $counter->incBy($existingValue);
-//                } catch (GuzzleException $ex) {
-////                     log a warning
-//                }
-            }
-        }
-
-        return $counter;
+        return $this->registry->getOrRegisterCounter(
+            $namespace,
+            $name,
+            $help,
+            $labels
+        );
     }
 
     /**
