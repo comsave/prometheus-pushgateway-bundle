@@ -3,6 +3,7 @@
 namespace Comsave\PrometheusPushGatewayBundle\Services;
 
 use Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponse;
+use Comsave\PrometheusPushGatewayBundle\Model\PrometheusResponseDataResult;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use JMS\Serializer\Serializer;
@@ -47,6 +48,11 @@ class PrometheusClient
         $this->password = $password;
     }
 
+    /**
+     * @param string $query
+     * @return array|PrometheusResponseDataResult[]
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function query(string $query): array
     {
         try {

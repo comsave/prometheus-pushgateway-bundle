@@ -29,11 +29,17 @@ class PrometheusResponseData
         $this->resultType = $resultType;
     }
 
+    /**
+     * @return array|PrometheusResponseDataResult[]
+     */
     public function getResults(): array
     {
         return $this->results;
     }
 
+    /**
+     * @param array|PrometheusResponseDataResult[] $results
+     */
     public function setResults(array $results): void
     {
         $this->results = $results;

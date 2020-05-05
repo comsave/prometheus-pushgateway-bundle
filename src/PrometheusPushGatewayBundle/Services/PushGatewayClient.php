@@ -4,12 +4,11 @@ namespace Comsave\PrometheusPushGatewayBundle\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Prometheus\CollectorRegistry;
-use Prometheus\Counter;
-use Prometheus\Exception\MetricNotFoundException;
 use Prometheus\Exception\MetricsRegistrationException;
 use Prometheus\Exception\StorageException;
-use Prometheus\Gauge;
 use Prometheus\Histogram;
+use Prometheus\Interfaces\CounterInterface;
+use Prometheus\Interfaces\GaugeInterface;
 use Prometheus\Storage\Redis;
 
 class PushGatewayClient
@@ -88,7 +87,7 @@ class PushGatewayClient
     /**
      * @throws MetricsRegistrationException
      */
-    public function counter(string $namespace, string $name, ?string $help = null, array $labels = [], bool $fetchCurrent = false): Counter
+    public function counter(string $namespace, string $name, ?string $help = null, array $labels = [], bool $fetchCurrent = false): CounterInterface
     {
         return $this->registry->getOrRegisterCounter(
             $namespace,
@@ -101,7 +100,7 @@ class PushGatewayClient
     /**
      * @throws MetricsRegistrationException
      */
-    public function gauge(string $namespace, string $name, ?string $help = null, array $labels = []): Gauge
+    public function gauge(string $namespace, string $name, ?string $help = null, array $labels = []): GaugeInterface
     {
         return $this->registry->getOrRegisterGauge(
             $namespace,

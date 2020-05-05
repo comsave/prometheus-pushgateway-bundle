@@ -75,7 +75,8 @@ class ConfigurationTest extends TestCase
                 'api' => [
                     'name' => 'orders',
                     'type' => 'counter',
-                    'prefetch' => true,
+                    'help' => 'counts number of orders',
+                    'prefetch_group_label' => 'user_id',
                     'labels' => [
                         'order_id',
                         'user_id',

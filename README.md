@@ -30,7 +30,8 @@ comsave_prometheus_pushgateway:
       api: # metric namespace
         - name: 'orders'
           type: 'counter'
-          prefetch: true # prefetch current value from prometheus if missing in redis buffer; true by default
+          help: 'counts the number of orders'
+          prefetch_group_label: 'user_id' # optional & only available for the counter; prefetch current value from prometheus by grouping sum() query by this label and populate the counter if it's missing in redis cache 
           labels:
             - 'order_id'
             - 'user_id'
