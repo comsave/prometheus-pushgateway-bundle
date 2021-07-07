@@ -1,0 +1,37 @@
+{
+  "name": "comsave/prometheus-pushgateway-bundle",
+  "description": "Symfony integration to push metrics to Prometheus + PushGateway",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.3",
+    "comsave/dependency-injection-config-to-parameters": "^0.1.0",
+    "comsave/prometheus_client_php": "^1.0.5",
+    "jms/serializer": "^3.0|^2.0",
+    "symfony/config": "^3.4|^4.4",
+    "symfony/console": "^3.4|^4.4",
+    "symfony/http-kernel": "^3.4|^4.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0",
+    "spatie/phpunit-snapshot-assertions": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Comsave\\PrometheusPushGatewayBundle\\": "src/PrometheusPushGatewayBundle"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Comsave\\PrometheusPushGatewayBundle\\Tests\\": "tests"
+    }
+  },
+  "authors": [
+    {
+      "name": "Vaidas Bagdonas",
+      "email": "vaidas.bagdonas@comsave.com"
+    }
+  ],
+  "config": {
+    "sort-packages": true
+  }
+}

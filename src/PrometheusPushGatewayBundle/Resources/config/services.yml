@@ -1,0 +1,45 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Comsave\PrometheusPushGatewayBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Event,Exception,Model,Kernel.php}'
+
+  Prometheus\Storage\Redis:
+    factory: ['Comsave\PrometheusPushGatewayBundle\Factory\RedisStorageAdapterFactory', 'build']
+    arguments: ['%comsave_prometheus_pushgateway.pushgateway.redis%']
+
+  Comsave\PrometheusPushGatewayBundle\Prometheus\CollectorRegistry:
+    autowire: false
+    arguments: ['@Symfony\Component\EventDispatcher\EventSubscriberInterface', '@Prometheus\Storage\Redis']
+
+  GuzzleHttp\Client:
+    factory: ['Comsave\PrometheusPushGatewayBundle\Factory\GuzzleHttpClientFactory', 'build']
+
+  JMS\Serializer\Serializer:
+    factory: ['Comsave\PrometheusPushGatewayBundle\Factory\JmsSerializerFactory', 'build']
+
+  Comsave\PrometheusPushGatewayBundle\Command\PrometheusPushCommand:
+    arguments:
+      $prometheusJobNames: '%comsave_prometheus_pushgateway.prometheus.jobs%'
+
+  Comsave\PrometheusPushGatewayBundle\Services\PushGateway:
+    arguments:
+      - '%comsave_prometheus_pushgateway.pushgateway.host%'
+      - '%comsave_prometheus_pushgateway.pushgateway.username%'
+      - '%comsave_prometheus_pushgateway.pushgateway.password%'
+
+  Comsave\PrometheusPushGatewayBundle\Services\PushGatewayClient:
+    arguments:
+      $prometheusInstanceName: '%comsave_prometheus_pushgateway.prometheus.instance%'
+
+  Comsave\PrometheusPushGatewayBundle\Services\PrometheusClient:
+    arguments:
+      $prometheusUrl: '%comsave_prometheus_pushgateway.prometheus.host%'
+      $username: '%comsave_prometheus_pushgateway.prometheus.username%'
+      $password: '%comsave_prometheus_pushgateway.prometheus.password%'
